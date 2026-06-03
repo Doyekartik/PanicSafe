@@ -2149,10 +2149,24 @@ function initializeEmergencyDrawer() {
   
   if (!drawerToggle || !drawer) return;
 
-  drawerToggle.addEventListener('click', () => {
+  drawerToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
     drawer.classList.toggle('expanded');
     const isExpanded = drawer.classList.contains('expanded');
     drawerToggle.setAttribute('aria-expanded', isExpanded);
+  });
+
+  // Close drawer when clicking outside
+  document.addEventListener('click', (e) => {
+    if (drawer.classList.contains('expanded') && !drawer.contains(e.target)) {
+      drawer.classList.remove('expanded');
+      drawerToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Prevent clicks inside drawer from closing it
+  drawer.addEventListener('click', (e) => {
+    e.stopPropagation();
   });
 
   // Close drawer when clicking an emergency item
