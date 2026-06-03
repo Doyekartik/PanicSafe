@@ -28,15 +28,318 @@
 :root.dark-mode {
   --bg-app: #1a202c;
   --bg-header: #2d3748;
-  --bg-btn-panic: #2d3748;
+  --bg-btn-panic: #374151;
   --bg-btn-danger: #742a2a;
-  --text-dark: #f0f4f8;
+  --text-dark: #f7fafc;
   --text-muted: #cbd5e0;
-  --text-dimmed: #a0aec0;
+  --text-dimmed: #9ca3af;
   --accent-color: #63b3ed;
   --danger-color: #f56565;
   --danger-hover: #e53e3e;
   --success-color: #68d391;
+}
+
+:root.dark-mode .profile-field input,
+:root.dark-mode .profile-field select,
+:root.dark-mode .profile-field textarea {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #f7fafc;
+}
+
+:root.dark-mode .profile-field input:focus,
+:root.dark-mode .profile-field select:focus,
+:root.dark-mode .profile-field textarea:focus {
+  background-color: #374151;
+  border-color: #63b3ed;
+}
+
+:root.dark-mode .alert-profile-input {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #f7fafc;
+}
+
+:root.dark-mode .alert-profile-input:focus {
+  background-color: #374151;
+  border-color: #63b3ed;
+}
+
+:root.dark-mode .add-contact-form input,
+:root.dark-mode .add-contact-form select {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #f7fafc;
+}
+
+:root.dark-mode .add-contact-form input:focus,
+:root.dark-mode .add-contact-form select:focus {
+  background-color: #374151;
+  border-color: #63b3ed;
+}
+
+:root.dark-mode .bottom-sheet {
+  background-color: #2d3748;
+  color: #f7fafc;
+}
+
+:root.dark-mode .sheet-title {
+  color: #f7fafc;
+}
+
+:root.dark-mode .sheet-subtitle {
+  color: #cbd5e0;
+}
+
+:root.dark-mode .preset-btn {
+  background-color: #374151;
+  color: #f7fafc;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .preset-btn span {
+  color: #9ca3af;
+}
+
+:root.dark-mode .time-input-group input {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #f7fafc;
+}
+
+:root.dark-mode .time-input-group input:focus {
+  border-color: #63b3ed;
+}
+
+:root.dark-mode .emergency-drawer {
+  background-color: rgba(45, 55, 72, 0.96);
+  border-color: rgba(74, 85, 104, 0.5);
+}
+
+:root.dark-mode .emergency-item {
+  background-color: #374151;
+  border-color: #4a5568;
+  color: #f7fafc;
+}
+
+:root.dark-mode .emergency-label {
+  color: #9ca3af;
+}
+
+:root.dark-mode .emergency-number {
+  color: #f7fafc;
+}
+
+:root.dark-mode .emergency-note {
+  color: #cbd5e0;
+  border-top-color: #4a5568;
+}
+
+:root.dark-mode .contact-item {
+  border-bottom-color: #374151;
+}
+
+:root.dark-mode .contact-name {
+  color: #f7fafc;
+}
+
+:root.dark-mode .contact-phone-relation {
+  color: #9ca3af;
+}
+
+:root.dark-mode .connect-card {
+  background-color: #374151;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .connect-row input {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #f7fafc;
+}
+
+:root.dark-mode .circle-btn {
+  background-color: #374151;
+  color: #f7fafc;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-mode .circle-btn .checkin-icon {
+  fill: #f7fafc;
+}
+
+:root.dark-mode .circle-btn .checkin-label {
+  color: #f7fafc;
+}
+
+:root.dark-mode .circle-btn.timer-active::before {
+  background-color: #4a5568;
+}
+
+:root.dark-mode .panic-btn {
+  background-color: #374151;
+  color: #f7fafc;
+}
+
+:root.dark-mode .panic-btn-icon {
+  stroke: #9ca3af;
+}
+
+:root.dark-mode .panic-btn-text {
+  color: #9ca3af;
+}
+
+:root.dark-mode .contacts-btn {
+  border-color: #4a5568;
+}
+
+:root.dark-mode .contacts-btn:hover {
+  background-color: rgba(74, 85, 104, 0.3);
+}
+
+:root.dark-mode .info-text {
+  color: #9ca3af;
+}
+
+:root.dark-mode .safety-status-btn {
+  background-color: #374151;
+  color: #f7fafc;
+}
+
+:root.dark-mode .status-indicator-row {
+  background-color: #374151;
+}
+
+:root.dark-mode .indicator-label {
+  color: #9ca3af;
+}
+
+:root.dark-mode .indicator-val {
+  color: #cbd5e0;
+}
+
+:root.dark-mode .gps-panel {
+  background-color: #1a202c;
+  color: #cbd5e0;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .gps-title {
+  color: #f7fafc;
+}
+
+:root.dark-mode .log-line {
+  color: #cbd5e0;
+}
+
+:root.dark-mode .log-time {
+  color: #9ca3af;
+}
+
+:root.dark-mode .auth-panel {
+  color: #f7fafc;
+}
+
+:root.dark-mode .auth-title {
+  color: #f7fafc;
+}
+
+:root.dark-mode .auth-subtitle {
+  color: #cbd5e0;
+}
+
+:root.dark-mode .firebase-google-btn {
+  background-color: #374151;
+  color: #f7fafc;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .profile-section-title {
+  color: #9ca3af;
+}
+
+:root.dark-mode .profile-field {
+  color: #cbd5e0;
+}
+
+:root.dark-mode .profile-save-btn {
+  background-color: #63b3ed;
+}
+
+:root.dark-mode .profile-logout-btn {
+  background-color: #374151;
+  color: #f87171;
+  border-color: #742a2a;
+}
+
+:root.dark-mode .profile-delete-btn {
+  background-color: #f56565;
+}
+
+:root.dark-mode .connect-row button {
+  background-color: #f7fafc;
+  color: #1a202c;
+}
+
+:root.dark-mode .notification-permission-btn {
+  background-color: #374151;
+  color: #f7fafc;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .notification-permission-btn.enabled {
+  background-color: rgba(104, 211, 145, 0.15);
+  border-color: #68d391;
+  color: #68d391;
+}
+
+:root.dark-mode .notification-permission-btn.blocked {
+  background-color: rgba(245, 101, 101, 0.15);
+  border-color: #f56565;
+  color: #f87171;
+}
+
+:root.dark-mode .custom-timer-trigger {
+  color: #63b3ed;
+}
+
+:root.dark-mode .custom-timer-trigger:hover {
+  color: #90cdf4;
+}
+
+:root.dark-mode .sheet-action-btn {
+  background-color: #63b3ed;
+  color: #1a202c;
+}
+
+:root.dark-mode .sheet-action-btn:hover {
+  background-color: #90cdf4;
+}
+
+:root.dark-mode .import-contact-btn {
+  background-color: #374151;
+  color: #63b3ed;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .contacts-empty {
+  color: #9ca3af;
+}
+
+:root.dark-mode .delete-contact-btn {
+  color: #f87171;
+}
+
+:root.dark-mode .delete-contact-btn:hover {
+  background-color: rgba(245, 101, 101, 0.15);
+}
+
+:root.dark-mode .connected-users-list {
+  border-bottom-color: #4a5568;
+}
+
+:root.dark-mode .connected-user-item {
+  border-top-color: #4a5568;
 }
 
 * {
@@ -277,10 +580,6 @@ body {
 
 .profile-field input[readonly] {
   color: var(--text-muted);
-}
-
-.profile-field select {
-  appearance: none;
 }
 
 .profile-save-btn {
