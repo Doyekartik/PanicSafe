@@ -775,6 +775,138 @@ main {
   overflow-y: auto;
 }
 
+/* --- Collapsible Emergency Numbers Drawer (India) --- */
+.emergency-drawer {
+  flex-shrink: 0;
+  margin: 0 12px;
+  padding-bottom: calc(12px + var(--safe-bottom));
+  z-index: 30;
+  border-radius: 18px 18px 0 0;
+  border: 1px solid #e2e8f0;
+  border-bottom: none;
+  background: #ffffff;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.emergency-drawer-toggle {
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--text-dark);
+  transition: all 0.2s ease;
+}
+
+.emergency-drawer-toggle:active {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.emergency-drawer-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-dark);
+}
+
+.emergency-drawer-chevron {
+  font-size: 16px;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+  transform: rotate(180deg);
+}
+
+.emergency-drawer-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+
+.emergency-drawer.expanded .emergency-drawer-content {
+  max-height: 260px;
+  opacity: 1;
+  overflow-y: auto;
+}
+
+.emergency-drawer.expanded .emergency-drawer-chevron {
+  transform: rotate(0deg);
+}
+
+.emergency-grid {
+  padding: 0 14px 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.emergency-item {
+  text-decoration: none;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 64px;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.emergency-item:hover {
+  border-color: var(--accent-color);
+  background: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15);
+}
+
+.emergency-item:active {
+  transform: scale(0.98);
+}
+
+.emergency-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.emergency-number {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-dark);
+  letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.emergency-item:hover .emergency-number {
+  color: #ffffff;
+}
+
+.emergency-item:hover .emergency-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.emergency-note {
+  padding: 12px 14px 14px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-dimmed);
+  border-top: 1px solid #edf2f7;
+  text-align: center;
+}
+
 /* Check In Circle Button Wrapper */
 .circle-btn-container {
   display: flex;
