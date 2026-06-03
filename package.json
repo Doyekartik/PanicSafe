@@ -1,0 +1,22 @@
+{
+  "name": "panicsafe",
+  "version": "1.0.0",
+  "description": "PanicSafe - Personal Safety & Real-Time SOS Monitoring Webapp",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "generate-vapid": "node scripts/generate-vapid-keys.js"
+  },
+  "keywords": [
+    "safety",
+    "emergency",
+    "leaflet",
+    "node",
+    "offline-first"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "web-push": "^3.6.7"
+  }
+}

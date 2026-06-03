@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PanicSafe - Personal Safety & Real-Time SOS Monitoring</title>
+  <meta name="description" content="A mobile-first safety assistant with timer check-ins, panic button triggers, emergency contact alerts, live maps, and GPS telemetry.">
+  <meta name="theme-color" content="#2d3748">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="PanicSafe">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+
+  <!-- Slide-in Toast Notification Container -->
+  <div id="toast-banner" class="toast">
+    <!-- Icon injected via JS -->
+    <span id="toast-message">Notification message</span>
+  </div>
+
+  <!-- Device frame mockup for premium desktop presentation -->
+  <div class="app-mockup" id="app-mockup">
+    <section class="auth-gate visible" id="auth-screen">
+      <div class="auth-panel">
+        <div class="auth-mark">
+          <img src="assets/icon-192.png" alt="" aria-hidden="true">
+        </div>
+        <h2 class="auth-title">PanicSafe</h2>
+        <p class="auth-subtitle">Sign in with Firebase Google Auth to create your safety profile.</p>
+        <button class="firebase-google-btn" id="firebase-google-btn" type="button">
+          <span class="google-glyph">G</span>
+          Continue with Google
+        </button>
+        <p class="auth-status" id="auth-status">Connecting to Firebase...</p>
+      </div>
+    </section>
+
+    <section class="profile-gate" id="profile-screen">
+      <form class="profile-panel" id="profile-form">
+        <div class="profile-page-header">
+          <button class="profile-back-btn" id="profile-back-btn" type="button" aria-label="Close profile">‹</button>
+          <div>
+            <h2 class="profile-title">Profile</h2>
+            <p class="profile-subtitle">Personal and medical details saved on this device.</p>
+          </div>
+        </div>
+
+        <div class="profile-section-title">Personal</div>
+        <div class="profile-grid">
+          <label class="profile-field">
+            Full Name
+            <input type="text" id="profile-full-name" placeholder="Your full name" required>
+          </label>
+          <label class="profile-field">
+            Email
+            <input type="email" id="profile-email" placeholder="you@example.com" readonly>
+          </label>
+          <label class="profile-field">
+            Phone Number
+            <input type="tel" id="profile-phone" placeholder="+91..." required>
+          </label>
+          <label class="profile-field">
+            Home Area
+            <input type="text" id="profile-home-area" placeholder="City or neighborhood">
+          </label>
+        </div>
+
+        <div class="profile-section-title">Health</div>
+        <div class="profile-grid compact">
+          <label class="profile-field">
+            Blood Group
+            <select id="profile-blood-group">
+              <option value="">Select</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="Unknown">Unknown</option>
+            </select>
+          </label>
+          <label class="profile-field">
+            Age
+            <input type="number" id="profile-age" min="1" max="120" placeholder="Age">
+          </label>
+          <label class="profile-field">
+            Height
+            <input type="text" id="profile-height" placeholder="e.g. 175 cm">
+          </label>
+          <label class="profile-field">
+            Weight
+            <input type="text" id="profile-weight" placeholder="e.g. 70 kg">
+          </label>
+        </div>
+
+        <label class="profile-field">
+          Allergies
+          <textarea id="profile-allergies" rows="2" placeholder="Food, medicine, latex, etc."></textarea>
+        </label>
+        <label class="profile-field">
+          Medical Conditions
+          <textarea id="profile-conditions" rows="2" placeholder="Asthma, diabetes, epilepsy, heart condition, etc."></textarea>
+        </label>
+        <label class="profile-field">
+          Current Medications
+          <textarea id="profile-medications" rows="2" placeholder="Medication names and dosage"></textarea>
+        </label>
+
+        <div class="profile-section-title">Emergency Medical Info</div>
+        <div class="profile-grid">
+          <label class="profile-field">
+            Doctor Name
+            <input type="text" id="profile-doctor-name" placeholder="Primary doctor">
+          </label>
+          <label class="profile-field">
+            Doctor Phone
+            <input type="tel" id="profile-doctor-phone" placeholder="+91...">
+          </label>
+        </div>
+        <label class="profile-field">
+          Insurance / Health ID
+          <input type="text" id="profile-insurance" placeholder="Optional policy or health ID">
+        </label>
+        <label class="profile-field">
+          Safety Note
+          <textarea id="profile-safety-note" rows="3" placeholder="Important instructions responders should know"></textarea>
+        </label>
+
+        <div class="profile-section-title">Connected PanicSafe Users</div>
+        <div class="connect-card">
+          <label class="profile-field">
+            Your Connect Code
+            <input type="text" id="profile-connect-code" readonly>
+          </label>
+          <div class="connect-row">
+            <input type="text" id="connect-user-input" placeholder="Enter connect code">
+            <button type="button" id="connect-user-btn">Connect</button>
+          </div>
+          <div class="connected-users-list" id="connected-users-list">
+            <div class="contacts-empty">No connected PanicSafe users yet.</div>
+          </div>
+        </div>
+
+        <button class="profile-save-btn" type="submit">Save Profile</button>
+        <button class="profile-logout-btn" id="profile-logout-btn" type="button">Log Out</button>
+        <button class="profile-delete-btn" id="profile-delete-btn" type="button">Delete Account</button>
+      </form>
+    </section>
+    
+    <!-- App Header -->
+    <header>
+      <h1 class="header-title" id="app-logo">PanicSafe</h1>
+      <button class="theme-toggle-btn" id="theme-toggle-btn" type="button" aria-label="Toggle dark mode">
+        <svg class="theme-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+      <button class="profile-chip" id="profile-chip" type="button" aria-label="Open profile">
+        <span id="profile-chip-initials">PS</span>
+      </button>
+    </header>
+
+    <!-- Main Active Workspace -->
+    <main>
+      
+      <!-- Center Action Circle Button -->
+      <div class="circle-btn-container">
+        <!-- SVG circular progress ring for countdown tracking -->
+        <svg class="timer-ring-svg">
+          <circle class="timer-ring-background" cx="115" cy="115" r="102" />
+          <circle class="timer-ring-progress" id="timer-progress" cx="115" cy="115" r="102" stroke-dasharray="640" stroke-dashoffset="640" />
+        </svg>
+        
+        <button class="circle-btn" id="checkin-btn" aria-label="Check In / Set Timer">
+          <!-- Person + Shield custom SVG Icon -->
+          <svg class="checkin-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" style="display:none;"/>
+            <!-- Custom high-quality path for a person with a shield -->
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            <path d="M18 11.5c0 3.3-2.7 6-6 6v2c4.4 0 8-3.6 8-8h-2z" style="display:none;"/>
+            <!-- Embedded shield cutout overlapping -->
+            <path d="M17.5 12.5c0-2.76 2.24-5 5-5s5 2.24 5 5c0 3.75-5 7.5-5 7.5s-5-3.75-5-7.5z" style="display:none;"/>
+          </svg>
+          <!-- When timer is active, this is replaced by digital numbers. When idle, shows label -->
+          <span class="checkin-label" id="checkin-label">CHECK IN</span>
+        </button>
+      </div>
+
+      <!-- Quick Action disarm / add-time buttons that appear below the active timer -->
+      <div class="timer-quick-actions" id="timer-quick-actions">
+        <button class="quick-action-btn safe-disarm" id="timer-disarm-btn">
+          <!-- Check mark SVG -->
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          I'm Safe
+        </button>
+        <button class="quick-action-btn" id="timer-extend-btn">
+          <!-- Plus SVG -->
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          +2 Min
+        </button>
+      </div>
+
+      <!-- Live Map Card Container (fades/collapses in when active) -->
+      <div class="map-view-box-container" id="map-view-box-container">
+        <div id="safety-map"></div>
+      </div>
+
+      <!-- Panic SOS Pill Button -->
+      <div class="panic-btn-container">
+        <button class="panic-btn" id="panic-trigger-btn" aria-label="Trigger Panic Alarm">
+          <!-- Target Concentric Dot SVG -->
+          <svg class="panic-btn-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="4" fill="currentColor" />
+          </svg>
+          <span class="panic-btn-text">PANIC BUTTON</span>
+        </button>
+      </div>
+
+      <!-- Outlined Add Emergency Contacts Pill -->
+      <div class="contacts-btn-container">
+        <button class="contacts-btn" id="contacts-trigger-btn" aria-label="Configure Emergency Contacts">
+          <!-- Custom SVG for user-plus -->
+          <svg class="contacts-btn-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          <span class="contacts-btn-text">Add Emergency Contacts</span>
+        </button>
+      </div>
+
+      <!-- Information disclaimer paragraph -->
+      <p class="info-text">
+        Your location will be sent to you emergency contacts at the start of every ride.
+      </p>
+
+      <!-- Bottom Floating Safety Status Pill -->
+      <div class="safety-status-container">
+        <button class="safety-status-btn" id="status-dashboard-btn" aria-label="View Safety Diagnostics">
+          <!-- Shield SVG -->
+          <svg class="status-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span class="status-text">Safety Status</span>
+        </button>
+      </div>
+
+    </main>
+
+    <!-- ==================== MODALS & BOTTOM SHEETS ==================== -->
+
+    <!-- Dark Blur Backdrop Overlay -->
+    <div class="overlay" id="modal-overlay"></div>
+
+    <!-- 1. Safety Timer Setup Sheet -->
+    <div class="bottom-sheet" id="timer-setup-sheet">
+      <div class="sheet-handle"></div>
+      <h2 class="sheet-title">Set Safety Timer</h2>
+      <p class="sheet-subtitle">If you don't check in by the timer's expiration, an alert will be sent.</p>
+      <input type="text" id="alert-user-name" class="alert-profile-input" placeholder="Your name for emergency SMS">
+      <button type="button" class="notification-permission-btn" id="notification-permission-btn">
+        Enable iPhone Notifications
+      </button>
+      
+      <!-- Presets Grid -->
+      <div class="timer-presets">
+        <button class="preset-btn" data-seconds="30">
+          30 Seconds
+          <span>Quick Test</span>
+        </button>
+        <button class="preset-btn" data-seconds="300">
+          5 Minutes
+          <span>Short walk</span>
+        </button>
+        <button class="preset-btn" data-seconds="900">
+          15 Minutes
+          <span>Taxi ride</span>
+        </button>
+        <button class="preset-btn" data-seconds="1800">
+          30 Minutes
+          <span>Commute</span>
+        </button>
+      </div>
+
+      <!-- Custom Input Toggle Link -->
+      <div class="custom-timer-trigger" id="custom-timer-toggle">Or set a custom duration</div>
+
+      <!-- Custom Input Form -->
+      <div class="custom-time-inputs" id="custom-time-inputs">
+        <div class="time-input-group">
+          <label for="custom-hours">Hrs</label>
+          <input type="number" id="custom-hours" min="0" max="23" value="0" placeholder="00">
+        </div>
+        <div class="time-input-group">
+          <label for="custom-mins">Min</label>
+          <input type="number" id="custom-mins" min="0" max="59" value="5" placeholder="05">
+        </div>
+        <div class="time-input-group">
+          <label for="custom-secs">Sec</label>
+          <input type="number" id="custom-secs" min="0" max="59" value="0" placeholder="00">
+        </div>
+      </div>
+
+      <button class="sheet-action-btn" id="start-timer-btn">Start Safety Timer</button>
+    </div>
+
+    <!-- 2. Emergency Contacts Configuration Sheet -->
+    <div class="bottom-sheet" id="contacts-setup-sheet">
+      <div class="sheet-handle"></div>
+      <h2 class="sheet-title">Emergency Contacts</h2>
+      <p class="sheet-subtitle">Add trusted contacts to be notified in case of emergencies.</p>
+      
+      <!-- Extant Contacts Scroll list -->
+      <div class="contacts-list-container" id="contacts-scroll-list">
+        <!-- Dyn. injected contact list -->
+        <div class="contacts-empty" id="contacts-empty-state">No emergency contacts added yet.</div>
+      </div>
+
+      <!-- Add Contact Form -->
+      <form id="add-contact-form" class="add-contact-form" onsubmit="return false;">
+        <button type="button" class="import-contact-btn" id="import-contact-btn">
+          <svg class="import-contact-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>
+          </svg>
+          Import from Device Contacts
+        </button>
+        <input type="file" id="vcard-import-input" accept=".vcf,text/vcard,text/x-vcard" hidden>
+        <input type="text" id="contact-name" class="full-width" placeholder="Full Name" required>
+        <input type="tel" id="contact-phone" placeholder="Phone Number (e.g. +1...)" required>
+        <select id="contact-relation" required>
+          <option value="" disabled selected>Relation</option>
+          <option value="Family">Family</option>
+          <option value="Friend">Friend</option>
+          <option value="Partner">Partner</option>
+          <option value="Other">Other</option>
+        </select>
+        <button type="submit" class="sheet-action-btn" style="grid-column: span 2; margin-top: 8px;">Add Contact</button>
+      </form>
+    </div>
+
+    <!-- 3. Safety Diagnostics Dashboard Overlay -->
+    <div class="bottom-sheet" id="diagnostics-sheet">
+      <div class="sheet-handle"></div>
+      <h2 class="sheet-title">Safety Status Dashboard</h2>
+      <p class="sheet-subtitle">Real-time status diagnostics of security systems.</p>
+      
+      <div class="status-indicators">
+        <div class="status-indicator-row">
+          <span class="indicator-label">MONITORING STATE</span>
+          <span class="indicator-val secure" id="diag-state-val">
+            <span class="indicator-dot"></span> SECURE
+          </span>
+        </div>
+        <div class="status-indicator-row">
+          <span class="indicator-label">EMERGENCY CONTACTS</span>
+          <span class="indicator-val" id="diag-contacts-count">0 Configured</span>
+        </div>
+      </div>
+
+      <!-- Real-Time Simulated GPS Panel -->
+      <div class="gps-panel">
+        <div class="gps-title">
+          <span>LIVE TELEMETRY</span>
+          <span class="gps-tracking-dot"></span>
+        </div>
+        <div>LAT: <span id="telemetry-lat">37.7749</span></div>
+        <div>LNG: <span id="telemetry-lng">-122.4194</span></div>
+        <div style="margin-top: 4px; font-size: 10px; color: #a0aec0;">ACCURACY: &plusmn;3 meters (MOCK GPS ACTIVE)</div>
+      </div>
+
+      <!-- Event Activity Log Terminal -->
+      <div class="sheet-subtitle" style="text-align: left; margin-bottom: 8px; font-weight: 600;">ACTIVITY LOG</div>
+      <div class="gps-panel" style="background-color: #1a202c; border: 1px solid #2d3748; margin-bottom: 0;">
+        <div class="log-terminal" id="activity-log-terminal">
+          <!-- Dynamic Log lines -->
+          <div class="log-line"><span class="log-time">[23:55:54]</span> System initialized successfully.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Pre-Panic Rapid 3s Countdown Overlay -->
+    <div class="panic-pre-overlay" id="panic-pre-overlay">
+      <div class="panic-countdown-circle" id="panic-countdown-val">3</div>
+      <h2 class="panic-pre-headline">Triggering Panic SOS Alarm</h2>
+      <p class="panic-pre-desc">Distress signals will be sent to all emergency contacts.</p>
+      <button class="cancel-panic-btn" id="panic-cancel-btn">CANCEL (3s)</button>
+    </div>
+
+    <!-- 5. Connected User Emergency Receiver Screen -->
+    <div class="guardian-alert-overlay" id="guardian-alert-overlay">
+      <div class="guardian-alert-topline">CONNECTED USER ALERT</div>
+      <h2 class="guardian-alert-title" id="guardian-alert-name">PanicSafe user is not responding</h2>
+      <p class="guardian-alert-time" id="guardian-alert-time">Timer alert received now</p>
+
+      <div class="guardian-location-card">
+        <span>Last Location</span>
+        <strong id="guardian-alert-location">Location unavailable</strong>
+        <a id="guardian-alert-map-link" href="#" target="_blank" rel="noopener">Open in Maps</a>
+      </div>
+
+      <div class="guardian-section-label">Health Details</div>
+      <div class="guardian-health-grid" id="guardian-alert-health-grid">
+        <div class="guardian-empty">Waiting for profile details...</div>
+      </div>
+
+      <div class="guardian-note" id="guardian-alert-note">Check on this user immediately.</div>
+
+      <div class="guardian-actions">
+        <a class="guardian-action primary" id="guardian-alert-call-link" href="#">Call User</a>
+        <button class="guardian-action secondary" id="guardian-alert-dismiss-btn" type="button">Dismiss</button>
+      </div>
+    </div>
+
+    <!-- 5. Active Danger Alarm Flashing Full Screen Overlay -->
+    <div class="alarm-overlay" id="alarm-overlay">
+      <div class="alarm-icon-box">
+        <!-- SVG Shield with warning sign -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-8h-2v4h2V8z"/>
+        </svg>
+      </div>
+      <h2 class="alarm-headline">EMERGENCY ACTIVE</h2>
+      <p class="alarm-desc">A loud alarm is sounding and location reports have been distributed.</p>
+      
+      <!-- Visual SMS Console simulation feed -->
+      <div class="sos-notification-feed" id="sos-notification-feed">
+        <!-- Dynamics notifications feed -->
+        <div class="sos-notif-line">&gt; Alarm activated. Audio broadcast engaged...</div>
+      </div>
+
+      <button class="disarm-alarm-btn" id="disarm-alarm-btn">DISMISS ALARM</button>
+    </div>
+
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="firebase-auth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
