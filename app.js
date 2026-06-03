@@ -2138,3 +2138,34 @@ function initializeDarkMode() {
 document.addEventListener('DOMContentLoaded', () => {
   initializeDarkMode();
 });
+
+// ============================================================================
+// EMERGENCY HELPLINES DRAWER TOGGLE
+// ============================================================================
+
+function initializeEmergencyDrawer() {
+  const drawerToggle = document.getElementById('emergency-drawer-toggle');
+  const drawer = document.getElementById('emergency-drawer');
+  
+  if (!drawerToggle || !drawer) return;
+
+  drawerToggle.addEventListener('click', () => {
+    drawer.classList.toggle('expanded');
+    const isExpanded = drawer.classList.contains('expanded');
+    drawerToggle.setAttribute('aria-expanded', isExpanded);
+  });
+
+  // Close drawer when clicking an emergency item
+  const emergencyItems = drawer.querySelectorAll('.emergency-item');
+  emergencyItems.forEach(item => {
+    item.addEventListener('click', () => {
+      drawer.classList.remove('expanded');
+      drawerToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+}
+
+// Initialize emergency drawer when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initializeEmergencyDrawer();
+});
