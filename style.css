@@ -814,10 +814,10 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 40px 24px 24px;
+  padding: 20px 24px 20px;
   position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
+  min-height: 0;
 }
 
 /* --- Collapsible Emergency Numbers Drawer --- */
@@ -999,10 +999,10 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
   position: relative;
-  width: 230px;
-  height: 230px;
+  width: 200px;
+  height: 200px;
 }
 
 /* Custom interactive timer ring */
@@ -1035,8 +1035,8 @@ main {
 }
 
 .circle-btn {
-  width: 210px;
-  height: 210px;
+  width: 180px;
+  height: 180px;
   background-color: #ffffff;
   border-radius: 50%;
   border: none;
@@ -1188,20 +1188,20 @@ main {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 25px;
+  margin-top: 15px;
 }
 
 .panic-btn {
   width: 100%;
-  height: 64px;
-  border-radius: 20px;
+  height: 56px;
+  border-radius: 18px;
   border: none;
   background-color: #ffffff;
   box-shadow: var(--shadow-pill);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   cursor: pointer;
   transition: all 0.25s ease;
 }
@@ -1247,13 +1247,13 @@ main {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 25px;
+  margin-top: 15px;
 }
 
 .contacts-btn {
   width: 100%;
-  height: 56px;
-  border-radius: 28px;
+  height: 50px;
+  border-radius: 25px;
   border: 1px solid #e2e8f0;
   background: transparent;
   display: flex;
@@ -1283,11 +1283,11 @@ main {
 
 /* Info Paragraph below contacts */
 .info-text {
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.4;
   color: var(--text-dimmed);
   text-align: center;
-  margin-top: 16px;
+  margin-top: 12px;
   padding: 0 10px;
 }
 
@@ -1297,7 +1297,7 @@ main {
   display: flex;
   justify-content: flex-end;
   margin-top: auto;
-  padding-top: 30px;
+  padding-top: 15px;
   padding-bottom: calc(12px + var(--safe-bottom));
 }
 
