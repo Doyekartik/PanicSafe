@@ -523,6 +523,23 @@
       <button class="disarm-alarm-btn" id="disarm-alarm-btn">DISMISS ALARM</button>
     </div>
 
+    <!-- 6. Shake Detection Alert Popup -->
+    <div class="shake-alert-overlay" id="shake-alert-overlay">
+      <div class="shake-alert-card">
+        <div class="shake-alert-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+        </div>
+        <h2 class="shake-alert-title">Is everything alright?</h2>
+        <p class="shake-alert-message">We detected a shake. Do you need help?</p>
+        <div class="shake-alert-actions">
+          <button class="shake-alert-btn secondary" id="shake-alright-btn" type="button">I'm Alright</button>
+          <button class="shake-alert-btn primary" id="shake-trigger-btn" type="button">Trigger Alert</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

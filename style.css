@@ -2016,6 +2016,159 @@ main {
   transform: translateY(-2px);
 }
 
+/* --- Shake Detection Alert Popup --- */
+.shake-alert-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 250;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+.shake-alert-overlay.visible {
+  display: flex;
+}
+
+.shake-alert-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px 24px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shake-alert-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shake-alert-icon svg {
+  width: 36px;
+  height: 36px;
+  fill: #ffffff;
+}
+
+.shake-alert-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  font-family: var(--font-title);
+}
+
+.shake-alert-message {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.shake-alert-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.shake-alert-btn {
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shake-alert-btn.primary {
+  background-color: var(--danger-color);
+  color: #ffffff;
+}
+
+.shake-alert-btn.primary:hover {
+  background-color: var(--danger-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(229, 62, 62, 0.3);
+}
+
+.shake-alert-btn.primary:active {
+  transform: scale(0.98);
+}
+
+.shake-alert-btn.secondary {
+  background-color: #f7fafc;
+  color: var(--text-dark);
+  border: 1px solid #e2e8f0;
+}
+
+.shake-alert-btn.secondary:hover {
+  background-color: #edf2f7;
+}
+
+.shake-alert-btn.secondary:active {
+  transform: scale(0.98);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dark mode styles for shake alert */
+:root.dark-mode .shake-alert-card {
+  background-color: #2d3748;
+}
+
+:root.dark-mode .shake-alert-title {
+  color: #f7fafc;
+}
+
+:root.dark-mode .shake-alert-message {
+  color: #cbd5e0;
+}
+
+:root.dark-mode .shake-alert-btn.secondary {
+  background-color: #374151;
+  color: #f7fafc;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .shake-alert-btn.secondary:hover {
+  background-color: #4a5568;
+}
+
 /* --- Rapid 3s Panic Warning Trigger Overlay --- */
 .panic-pre-overlay {
   position: absolute;

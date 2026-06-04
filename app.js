@@ -2183,3 +2183,149 @@ function initializeEmergencyDrawer() {
 document.addEventListener('DOMContentLoaded', () => {
   initializeEmergencyDrawer();
 });
+
+// ============================================================================
+// SHAKE DETECTION FEATURE
+// ============================================================================
+
+let shakeDetectionState = {
+  lastX: 0,
+  lastY: 0,
+  lastZ: 0,
+  lastTime: 0,
+  shakeThreshold: 15, // Sensitivity threshold
+  shakeTimeout: null,
+  cooldownPeriod: 3000, // 3 seconds cooldown between shake detections
+  lastShakeTime: 0
+};
+
+function initializeShakeDetection() {
+  const shakeOverlay = document.getElementById('shake-alert-overlay');
+  const alrightBtn = document.getElementById('shake-alright-btn');
+  const triggerBtn = document.getElementById('shake-trigger-btn');
+
+  if (!shakeOverlay || !alrightBtn || !triggerBtn) return;
+
+  // Check if DeviceMotionEvent is available
+  if (typeof DeviceMotionEvent === 'undefined') {
+    console.log('Device motion not supported on this device');
+    return;
+  }
+
+  // Request permission for iOS 13+
+  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    // iOS 13+ requires explicit permission
+    // We'll request this when user first interacts with the app
+    document.addEventListener('click', requestMotionPermission, { once: true });
+  } else {
+    // Non-iOS or iOS < 13
+    startShakeDetection();
+  }
+
+  // Button handlers
+  alrightBtn.addEventListener('click', () => {
+    closeShakeAlert();
+  });
+
+  triggerBtn.addEventListener('click', () => {
+    closeShakeAlert();
+    // Trigger the panic button
+    const panicBtn = document.getElementById('panic-trigger-btn');
+    if (panicBtn) {
+      panicBtn.click();
+    }
+  });
+}
+
+function requestMotionPermission() {
+  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    DeviceMotionEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === 'granted') {
+          startShakeDetection();
+          logActivity('Motion detection permission granted.');
+        } else {
+          console.log('Motion detection permission denied');
+        }
+      })
+      .catch(console.error);
+  }
+}
+
+function startShakeDetection() {
+  window.addEventListener('devicemotion', handleDeviceMotion, true);
+  logActivity('Shake detection activated.');
+}
+
+function handleDeviceMotion(event) {
+  const current = event.accelerationIncludingGravity;
+  const currentTime = new Date().getTime();
+
+  // Check cooldown period
+  if (currentTime - shakeDetectionState.lastShakeTime < shakeDetectionState.cooldownPeriod) {
+    return;
+  }
+
+  if (shakeDetectionState.lastTime === 0) {
+    shakeDetectionState.lastX = current.x;
+    shakeDetectionState.lastY = current.y;
+    shakeDetectionState.lastZ = current.z;
+    shakeDetectionState.lastTime = currentTime;
+    return;
+  }
+
+  const deltaX = Math.abs(current.x - shakeDetectionState.lastX);
+  const deltaY = Math.abs(current.y - shakeDetectionState.lastY);
+  const deltaZ = Math.abs(current.z - shakeDetectionState.lastZ);
+
+  if (
+    (deltaX > shakeDetectionState.shakeThreshold && deltaY > shakeDetectionState.shakeThreshold) ||
+    (deltaX > shakeDetectionState.shakeThreshold && deltaZ > shakeDetectionState.shakeThreshold) ||
+    (deltaY > shakeDetectionState.shakeThreshold && deltaZ > shakeDetectionState.shakeThreshold)
+  ) {
+    // Shake detected!
+    shakeDetectionState.lastShakeTime = currentTime;
+    showShakeAlert();
+  }
+
+  shakeDetectionState.lastX = current.x;
+  shakeDetectionState.lastY = current.y;
+  shakeDetectionState.lastZ = current.z;
+  shakeDetectionState.lastTime = currentTime;
+}
+
+function showShakeAlert() {
+  const shakeOverlay = document.getElementById('shake-alert-overlay');
+  if (!shakeOverlay) return;
+
+  // Don't show if alarm is already active or panic is in progress
+  const alarmOverlay = document.getElementById('alarm-overlay');
+  const panicPreOverlay = document.getElementById('panic-pre-overlay');
+  
+  if (
+    alarmOverlay?.classList.contains('visible') || 
+    panicPreOverlay?.classList.contains('visible')
+  ) {
+    return;
+  }
+
+  shakeOverlay.classList.add('visible');
+  logActivity('Shake detected. Emergency confirmation prompt shown.');
+
+  // Vibrate if supported
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 100, 200]);
+  }
+}
+
+function closeShakeAlert() {
+  const shakeOverlay = document.getElementById('shake-alert-overlay');
+  if (shakeOverlay) {
+    shakeOverlay.classList.remove('visible');
+  }
+}
+
+// Initialize shake detection when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initializeShakeDetection();
+});
