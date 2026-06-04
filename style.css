@@ -718,7 +718,7 @@ body {
     bottom: calc(12px + var(--safe-bottom));
     left: 12px;
     width: auto;
-    max-width: calc(100vw - 140px);
+    max-width: calc(100vw - 120px);
   }
 
   .emergency-drawer:not(.expanded) {
@@ -728,6 +728,11 @@ body {
   .emergency-drawer.expanded {
     width: calc(100vw - 24px);
     max-width: calc(100vw - 24px);
+  }
+
+  .safety-status-btn {
+    bottom: calc(12px + var(--safe-bottom));
+    right: 12px;
   }
 }
 
@@ -828,7 +833,7 @@ main {
   bottom: calc(16px + var(--safe-bottom));
   left: 16px;
   z-index: 50;
-  max-width: 320px;
+  max-width: 280px;
   width: calc(100vw - 40px);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
@@ -840,24 +845,24 @@ main {
 }
 
 .emergency-drawer-toggle {
-  min-height: 40px;
+  min-height: 36px;
   border: none;
   background: #ffffff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 6px;
-  padding: 10px 14px;
+  gap: 5px;
+  padding: 8px 12px;
   color: var(--text-dark);
   transition: all 0.3s ease;
-  border-radius: 20px;
+  border-radius: 18px;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
 }
 
 .emergency-drawer.expanded .emergency-drawer-toggle {
-  border-radius: 14px 14px 0 0;
+  border-radius: 12px 12px 0 0;
   box-shadow: none;
   border-bottom: none;
 }
@@ -873,26 +878,26 @@ main {
 }
 
 .emergency-drawer-toggle:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .emergency-icon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   fill: var(--danger-color);
   flex-shrink: 0;
 }
 
 .emergency-drawer-title {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   color: var(--text-dark);
   white-space: nowrap;
 }
 
 .emergency-drawer-chevron {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--text-muted);
   transition: transform 0.3s ease;
   transform: rotate(180deg);
@@ -905,10 +910,20 @@ main {
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   background: #ffffff;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 14px 14px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  border: 1.5px solid #e2e8f0;
+  border: 1px solid #e2e8f0;
   border-top: none;
+}
+
+.emergency-drawer.expanded .emergency-drawer-content {
+  max-height: 280px;
+  opacity: 1;
+  overflow-y: auto;
+}
+
+.emergency-drawer.expanded .emergency-drawer-chevron {
+  transform: rotate(0deg);
 }
 
 .emergency-drawer.expanded .emergency-drawer-content {
@@ -1307,20 +1322,26 @@ main {
 .safety-status-btn {
   background-color: #ffffff;
   border: none;
-  border-radius: 25px;
-  padding: 12px 20px;
+  border-radius: 18px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   cursor: pointer;
-  box-shadow: var(--shadow-pill);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
   transition: all 0.25s ease;
+  min-height: 36px;
+  position: fixed;
+  bottom: calc(16px + var(--safe-bottom));
+  right: 16px;
+  z-index: 49;
 }
 
 .safety-status-btn:hover {
   background-color: var(--bg-btn-panic);
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
 .safety-status-btn:active {
@@ -1328,16 +1349,16 @@ main {
 }
 
 .status-icon {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   fill: #000000;
 }
 
 .status-text {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 700;
   color: var(--text-dark);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
 }
 
 /* --- Modals / Bottom Sheets --- */
