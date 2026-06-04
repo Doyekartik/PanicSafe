@@ -1412,7 +1412,7 @@ main {
   transform: translateY(100%);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 101;
-  max-height: 80%;
+  max-height: 92%;
   display: flex;
   flex-direction: column;
 }
@@ -1453,6 +1453,17 @@ main {
   gap: 12px;
   margin-bottom: 20px;
 }
+
+/* Keep custom area compact and scrollable to avoid pushing controls */
+.custom-time-inputs {
+  max-height: 220px;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.custom-dial-wrap { max-width: 260px; width: 100%; }
+.custom-dial { width: 220px; max-width: 100%; height: 120px; }
 
 .preset-btn {
   background-color: var(--bg-btn-panic);
@@ -1626,6 +1637,20 @@ main {
   border-color: var(--accent-color);
 }
 
+/* Ensure permission/toggle buttons remain full width in the sheet */
+.notification-permission-btn,
+.shake-detection-toggle-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #e6eef8;
+  background: var(--bg-btn-panic);
+  text-align: center;
+  font-weight: 700;
+}
+
 /* Action button for modal forms */
 .sheet-action-btn {
   background-color: var(--text-dark);
@@ -1637,7 +1662,10 @@ main {
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  margin-top: auto;
+  margin-top: 12px;
+  position: sticky;
+  bottom: calc(var(--safe-bottom) + 12px);
+  z-index: 105;
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
