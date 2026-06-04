@@ -2259,6 +2259,7 @@ let shakeDetectionState = {
   permissionAsked: false,
   autoTriggerTimer: null,
   autoTriggerCountdown: 30
+  ,alertActive: false
 };
 
 function initializeShakeDetection() {
@@ -2299,7 +2300,7 @@ function initializeShakeDetection() {
   // Shake alert button handlers
   alrightBtn.addEventListener('click', () => {
     console.log('User clicked I\'m Alright');
-    closeShakeAlert();
+    acknowledgeShake();
   });
 
   triggerBtn.addEventListener('click', () => {
@@ -2405,6 +2406,9 @@ function startShakeDetection() {
 }
 
 function handleDeviceMotion(event) {
+  // Ignore motion events while an active shake alert/countdown is visible
+  if (shakeDetectionState.alertActive) return;
+
   const current = event.accelerationIncludingGravity;
   
   if (!current || current.x === null || current.y === null || current.z === null) {
@@ -2458,6 +2462,9 @@ function showShakeAlert() {
   }
 
   console.log('Shake overlay element found:', shakeOverlay);
+
+  // Mark alert active so subsequent shakes are ignored until user acknowledges
+  shakeDetectionState.alertActive = true;
 
   // Don't show if alarm is already active or panic is in progress
   const alarmOverlay = document.getElementById('alarm-overlay');
@@ -2555,6 +2562,14 @@ function closeShakeAlert() {
     countdownElement.parentElement.style.backgroundColor = '#fff5f5';
     countdownElement.parentElement.style.borderColor = '#fed7d7';
   }
+}
+
+function acknowledgeShake() {
+  // User confirmed they're alright – close prompt and allow future shakes
+  closeShakeAlert();
+  shakeDetectionState.alertActive = false;
+  if (typeof logActivity === 'function') logActivity('Shake alert acknowledged by user.');
+  showToast('Shake alert dismissed', 'success');
 }
 
 // Initialize shake detection when DOM is ready
