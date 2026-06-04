@@ -1692,6 +1692,11 @@ function triggerPanicBtnSequence() {
   state.panicCountdown.remaining = 3;
   DOM.panicCountdownVal.textContent = state.panicCountdown.remaining;
   
+  // Immediate vibration feedback when panic button is pressed
+  if (navigator.vibrate) {
+    navigator.vibrate([100, 50, 100]); // Quick alert on panic press
+  }
+  
   DOM.panicPreOverlay.classList.add('visible');
   playChime('tick');
   logActivity('Panic Button pressed. Starting 3s pre-alarm interruption.');
@@ -1702,6 +1707,10 @@ function triggerPanicBtnSequence() {
     
     if (state.panicCountdown.remaining > 0) {
       playChime('tick');
+      // Vibration pulse on each countdown tick
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
     } else {
       clearInterval(state.panicCountdown.intervalId);
       state.panicCountdown.intervalId = null;
@@ -1732,6 +1741,12 @@ function cancelPanicBtnSequence() {
 // ============================================================================
 function triggerAlarmSequence(triggerSource) {
   setMonitoringState('ALARM');
+  
+  // Strong vibration alert on the sender's phone
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 100, 200, 100, 300]); // 5 pulses for urgent alert
+  }
+  
   notifyTimerExpiration(triggerSource);
   
   // Collapse Map
