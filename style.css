@@ -2053,10 +2053,11 @@ main {
   height: 64px;
   margin: 0 auto 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .shake-alert-icon svg {

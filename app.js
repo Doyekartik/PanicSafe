@@ -2211,7 +2211,12 @@ function initializeShakeDetection() {
   const motionEnableBtn = document.getElementById('motion-permission-enable');
   const motionSkipBtn = document.getElementById('motion-permission-skip');
 
-  if (!shakeOverlay || !alrightBtn || !triggerBtn) return;
+  if (!shakeOverlay || !alrightBtn || !triggerBtn) {
+    console.error('Shake alert elements not found in DOM');
+    return;
+  }
+
+  console.log('Shake detection initialization started');
 
   // Check if DeviceMotionEvent is available
   if (typeof DeviceMotionEvent === 'undefined') {
@@ -2221,6 +2226,7 @@ function initializeShakeDetection() {
 
   // Check if permission was already asked
   const permissionStatus = localStorage.getItem('motion_permission_status');
+  console.log('Motion permission status:', permissionStatus);
   
   if (permissionStatus === 'granted') {
     startShakeDetection();
@@ -2229,12 +2235,15 @@ function initializeShakeDetection() {
     console.log('Motion permission previously denied or skipped');
   } else {
     // Show permission request after a short delay (when user is settled)
+    console.log('Will show motion permission prompt in 2 seconds');
     setTimeout(() => {
       if (typeof DeviceMotionEvent.requestPermission === 'function') {
         // iOS 13+ - show our custom prompt
+        console.log('iOS device detected, showing permission prompt');
         showMotionPermissionPrompt();
       } else {
         // Non-iOS or iOS < 13 - start directly
+        console.log('Non-iOS device, starting shake detection directly');
         startShakeDetection();
         localStorage.setItem('motion_permission_status', 'granted');
       }
@@ -2243,10 +2252,12 @@ function initializeShakeDetection() {
 
   // Shake alert button handlers
   alrightBtn.addEventListener('click', () => {
+    console.log('User clicked I\'m Alright');
     closeShakeAlert();
   });
 
   triggerBtn.addEventListener('click', () => {
+    console.log('User clicked Trigger Alert');
     closeShakeAlert();
     // Trigger the panic button
     const panicBtn = document.getElementById('panic-trigger-btn');
@@ -2258,6 +2269,7 @@ function initializeShakeDetection() {
   // Motion permission handlers
   if (motionEnableBtn) {
     motionEnableBtn.addEventListener('click', async () => {
+      console.log('User clicked Enable motion permission');
       await requestMotionPermission();
       closeMotionPermissionPrompt();
     });
@@ -2265,11 +2277,19 @@ function initializeShakeDetection() {
 
   if (motionSkipBtn) {
     motionSkipBtn.addEventListener('click', () => {
+      console.log('User clicked Skip motion permission');
       localStorage.setItem('motion_permission_status', 'skipped');
       closeMotionPermissionPrompt();
       logActivity('Motion detection permission skipped by user.');
     });
   }
+
+  // TEST BUTTON - Remove this after testing
+  // Uncomment to test shake popup manually:
+  // setTimeout(() => {
+  //   console.log('TEST: Showing shake alert manually');
+  //   showShakeAlert();
+  // }, 5000);
 }
 
 function showMotionPermissionPrompt() {
@@ -2277,6 +2297,9 @@ function showMotionPermissionPrompt() {
   if (motionPermissionOverlay && !shakeDetectionState.permissionAsked) {
     motionPermissionOverlay.classList.add('visible');
     shakeDetectionState.permissionAsked = true;
+    console.log('Motion permission prompt shown');
+  } else {
+    console.log('Motion permission overlay not found or already asked');
   }
 }
 
@@ -2316,11 +2339,20 @@ async function requestMotionPermission() {
 }
 
 function startShakeDetection() {
-  if (shakeDetectionState.permissionGranted) return; // Already started
+  if (shakeDetectionState.permissionGranted) {
+    console.log('Shake detection already started');
+    return; // Already started
+  }
   
+  console.log('Starting shake detection - adding devicemotion listener');
   window.addEventListener('devicemotion', handleDeviceMotion, true);
   shakeDetectionState.permissionGranted = true;
-  logActivity('Shake detection activated.');
+  
+  if (typeof logActivity === 'function') {
+    logActivity('Shake detection activated.');
+  }
+  
+  console.log('Shake detection is now active');
 }
 
 function handleDeviceMotion(event) {
@@ -2349,12 +2381,14 @@ function handleDeviceMotion(event) {
   const deltaY = Math.abs(current.y - shakeDetectionState.lastY);
   const deltaZ = Math.abs(current.z - shakeDetectionState.lastZ);
 
+  // More sensitive shake detection
   if (
     (deltaX > shakeDetectionState.shakeThreshold && deltaY > shakeDetectionState.shakeThreshold) ||
     (deltaX > shakeDetectionState.shakeThreshold && deltaZ > shakeDetectionState.shakeThreshold) ||
     (deltaY > shakeDetectionState.shakeThreshold && deltaZ > shakeDetectionState.shakeThreshold)
   ) {
     // Shake detected!
+    console.log('SHAKE DETECTED! deltaX:', deltaX, 'deltaY:', deltaY, 'deltaZ:', deltaZ);
     shakeDetectionState.lastShakeTime = currentTime;
     showShakeAlert();
   }
@@ -2366,8 +2400,15 @@ function handleDeviceMotion(event) {
 }
 
 function showShakeAlert() {
+  console.log('showShakeAlert called');
   const shakeOverlay = document.getElementById('shake-alert-overlay');
-  if (!shakeOverlay) return;
+  
+  if (!shakeOverlay) {
+    console.error('shake-alert-overlay element not found');
+    return;
+  }
+
+  console.log('Shake overlay element found:', shakeOverlay);
 
   // Don't show if alarm is already active or panic is in progress
   const alarmOverlay = document.getElementById('alarm-overlay');
@@ -2377,18 +2418,25 @@ function showShakeAlert() {
     alarmOverlay?.classList.contains('visible') || 
     panicPreOverlay?.classList.contains('visible')
   ) {
+    console.log('Not showing shake alert - alarm or panic already active');
     return;
   }
 
+  console.log('Adding visible class to shake overlay');
   shakeOverlay.classList.add('visible');
-  logActivity('Shake detected. Emergency confirmation prompt shown.');
+  
+  if (typeof logActivity === 'function') {
+    logActivity('Shake detected. Emergency confirmation prompt shown.');
+  }
 
   // Vibrate if supported
   if (navigator.vibrate) {
+    console.log('Triggering vibration');
     navigator.vibrate([200, 100, 200]);
   }
 
   // Start 30-second auto-trigger countdown
+  console.log('Starting auto-trigger countdown');
   startAutoTriggerCountdown();
 }
 
