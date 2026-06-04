@@ -1378,6 +1378,10 @@ function setupTimerPresets() {
     const customVisible = DOM.customTimeInputs.classList.contains('visible');
     // hide presets when custom dial is active, show them otherwise
     if (DOM.timerPresets) DOM.timerPresets.style.display = customVisible ? 'none' : '';
+    // update toggle label
+    if (DOM.customTimerToggle) {
+      DOM.customTimerToggle.textContent = customVisible ? 'Or select from Presets' : 'Or set a custom duration';
+    }
     // initialize custom dial when shown
     if (customVisible) initCustomTimerDialUI();
   });
