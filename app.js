@@ -1376,73 +1376,150 @@ function setupTimerPresets() {
     DOM.customTimeInputs.classList.toggle('visible');
     // initialize custom fast UI when shown
     if (DOM.customTimeInputs.classList.contains('visible')) {
-      initCustomTimerFastUI();
+      initCustomTimerDialUI();
     }
   });
 }
-
-function initCustomTimerFastUI() {
-  // Ensure DOM refs exist
+function initCustomTimerDialUI() {
+  const svg = document.getElementById('custom-dial-svg');
+  const knob = document.getElementById('dial-knob');
   const display = document.getElementById('custom-time-display');
-  if (!display) return;
+  if (!svg || !knob || !display || !DOM.customMins) return;
 
-  // Hidden inputs already bound in DOM.* refs
-  if (!DOM.customHours || !DOM.customMins || !DOM.customSecs) return;
+  const view = { cx: 100, cy: 100, r: 90 };
 
-  // If empty or zero, set a sensible default (5 minutes)
-  let hrs = parseInt(DOM.customHours.value, 10) || 0;
-  let mins = parseInt(DOM.customMins.value, 10);
-  let secs = parseInt(DOM.customSecs.value, 10);
-  if (!mins && !secs && !hrs) {
-    mins = 5;
-    DOM.customMins.value = String(mins);
-  }
-
-  function totalSeconds() {
-    return (parseInt(DOM.customHours.value, 10) || 0) * 3600 + (parseInt(DOM.customMins.value, 10) || 0) * 60 + (parseInt(DOM.customSecs.value, 10) || 0);
-  }
+  // Ensure sensible default
+  let minutes = Math.max(1, Math.min(60, parseInt(DOM.customMins.value, 10) || 5));
 
   function render() {
-    const t = Math.max(0, totalSeconds());
-    const h = Math.floor(t / 3600);
-    const m = Math.floor((t % 3600) / 60);
-    const s = t % 60;
-    display.textContent = h > 0 ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    // Update hidden input
+    DOM.customHours.value = '0';
+    DOM.customMins.value = String(minutes);
+    DOM.customSecs.value = '0';
+    // Update display
+    display.textContent = `${String(minutes).padStart(2,'0')}:00`;
+    // Position knob on SVG semicircle
+    const rad = ((minutes - 1) / 59) * Math.PI; // 0..pi
+    const x = view.cx - view.r * Math.cos(rad);
+    const y = view.cy - view.r * Math.sin(rad);
+    const knobGroup = document.getElementById('knob-group');
+    if (knobGroup) {
+      knobGroup.setAttribute('transform', `translate(${x},${y})`);
+    }
+    // update aria
+    const dialEl = document.getElementById('custom-dial');
+    if (dialEl) dialEl.setAttribute('aria-valuenow', String(minutes));
   }
 
-  function change(delta) {
-    let t = totalSeconds() + delta;
-    if (t < 0) t = 0;
-    const h = Math.floor(t / 3600);
-    const m = Math.floor((t % 3600) / 60);
-    const s = t % 60;
-    DOM.customHours.value = String(h);
-    DOM.customMins.value = String(m);
-    DOM.customSecs.value = String(s);
+  function setFromSvgPoint(svgPoint) {
+    const dx = view.cx - svgPoint.x;
+    const dy = view.cy - svgPoint.y;
+    const rad = Math.atan2(dy, dx); // 0..pi for semicircle
+    // clamp
+    const clamped = Math.max(0, Math.min(Math.PI, rad));
+    const angleDeg = clamped * 180 / Math.PI;
+    const m = 1 + Math.round((angleDeg / 180) * 59);
+    minutes = Math.max(1, Math.min(60, m));
     render();
   }
 
-  // Wire controls (id-based)
-  const map = {
-    'dec-2m': -120,
-    'dec-30s': -30,
-    'dec-10s': -10,
-    'inc-10s': 10,
-    'inc-30s': 30,
-    'inc-2m': 120,
-    'reset-custom': 300
-  };
+  // Draw tick marks and labels every 5 and 10 minutes
+  (function drawTicks() {
+    const ticksGroup = document.getElementById('dial-ticks');
+    if (!ticksGroup) return;
+    // Clear previous
+    while (ticksGroup.firstChild) ticksGroup.removeChild(ticksGroup.firstChild);
 
-  Object.keys(map).forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.onclick = () => change(map[id]);
+    for (let i = 0; i < 60; i += 5) {
+      const angle = (i / 59) * Math.PI; // 0..pi
+      const outerR = view.r;
+      const innerR = view.r - (i % 10 === 0 ? 12 : 6);
+      const ox = view.cx - outerR * Math.cos(angle);
+      const oy = view.cy - outerR * Math.sin(angle);
+      const ix = view.cx - innerR * Math.cos(angle);
+      const iy = view.cy - innerR * Math.sin(angle);
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', String(ox));
+      line.setAttribute('y1', String(oy));
+      line.setAttribute('x2', String(ix));
+      line.setAttribute('y2', String(iy));
+      line.setAttribute('class', 'dial-tick');
+      if (i % 10 === 0) line.classList.add('major');
+      ticksGroup.appendChild(line);
+
+      if (i % 10 === 0) {
+        // label
+        const labelR = view.r - 26;
+        const lx = view.cx - labelR * Math.cos(angle);
+        const ly = view.cy - labelR * Math.sin(angle) + 4; // small vertical tweak
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', String(lx));
+        text.setAttribute('y', String(ly));
+        text.setAttribute('class', 'dial-label');
+        text.setAttribute('text-anchor', 'middle');
+        text.textContent = String(i === 0 ? 60 : i);
+        ticksGroup.appendChild(text);
+      }
+    }
+  })();
+
+  function toSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const inv = svg.getScreenCTM().inverse();
+    return pt.matrixTransform(inv);
+  }
+
+  let dragging = false;
+
+  knob.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    (e.target).setPointerCapture(e.pointerId);
+    // tiny haptic feedback for mobile devices
+    try {
+      if (navigator.vibrate) navigator.vibrate(10);
+    } catch (err) {
+      /* swallow */
+    }
+    dragging = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    setFromSvgPoint(p);
   });
+
+  svg.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    const p = toSvgPoint(e.clientX, e.clientY);
+    setFromSvgPoint(p);
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    setFromSvgPoint(p);
+  });
+
+  window.addEventListener('pointerup', (e) => {
+    if (!dragging) return;
+    dragging = false;
+    try { knob.releasePointerCapture(e.pointerId); } catch (_) {}
+  });
+
+  // Keyboard accessibility
+  const dialWrap = document.getElementById('custom-dial');
+  if (dialWrap) {
+    dialWrap.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+        minutes = Math.max(1, minutes - 1); render(); e.preventDefault();
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+        minutes = Math.min(60, minutes + 1); render(); e.preventDefault();
+      }
+    });
+  }
 
   const applyBtn = document.getElementById('apply-custom-time');
   if (applyBtn) {
     applyBtn.onclick = () => {
-      // Select the custom duration so getTimerDuration reads it
       selectedTimerPresetSeconds = null;
       showToast('Custom timer set', 'success');
     };

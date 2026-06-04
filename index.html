@@ -380,28 +380,27 @@
       <!-- Custom Input Toggle Link -->
       <div class="custom-timer-trigger" id="custom-timer-toggle">Or set a custom duration</div>
 
-      <!-- Custom Input Form (fast & aesthetic controls) -->
+      <!-- Custom Input Form (semicircle minute dial 1–60) -->
       <div class="custom-time-inputs" id="custom-time-inputs">
-        <div class="custom-timer-fast">
+        <div class="custom-dial-wrap">
           <div class="custom-time-display" id="custom-time-display">05:00</div>
-          <div class="custom-time-controls">
-            <div class="control-row">
-              <button type="button" class="small-btn" id="dec-2m">-2m</button>
-              <button type="button" class="small-btn" id="dec-30s">-30s</button>
-              <button type="button" class="small-btn" id="inc-30s">+30s</button>
-              <button type="button" class="small-btn" id="inc-2m">+2m</button>
-            </div>
-            <div class="control-row">
-              <button type="button" class="small-btn" id="dec-10s">-10s</button>
-              <button type="button" class="small-btn" id="reset-custom">Reset</button>
-              <button type="button" class="small-btn" id="inc-10s">+10s</button>
-              <button type="button" class="preset-apply-btn" id="apply-custom-time">Apply</button>
-            </div>
+          <div class="custom-dial" id="custom-dial" role="slider" aria-label="Custom minutes dial" tabindex="0">
+            <svg id="custom-dial-svg" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet">
+              <path d="M10,100 A90,90 0 0 1 190,100" class="dial-track" fill="none" stroke-width="8" stroke-linecap="round"/>
+              <g id="dial-ticks"></g>
+              <g id="knob-group" transform="translate(10,100)">
+                <circle id="dial-knob" class="dial-knob" r="8" cx="0" cy="0" />
+              </g>
+            </svg>
+          </div>
+          <div class="dial-hint">Drag the knob to set minutes (1–60)</div>
+          <div class="custom-dial-actions">
+            <button type="button" class="preset-apply-btn" id="apply-custom-time">Apply</button>
           </div>
         </div>
         <!-- Hidden compatibility inputs (keep API for existing code) -->
         <input type="number" id="custom-hours" min="0" max="23" value="0" hidden>
-        <input type="number" id="custom-mins" min="0" max="59" value="5" hidden>
+        <input type="number" id="custom-mins" min="1" max="60" value="5" hidden>
         <input type="number" id="custom-secs" min="0" max="59" value="0" hidden>
       </div>
 
