@@ -2103,6 +2103,50 @@ main {
   animation: fadeIn 0.3s ease;
 }
 
+/* --- Custom Fast Timer Controls --- */
+.custom-timer-fast {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+.custom-time-display {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(180deg,#fff,#f7fafc);
+  padding: 8px 18px;
+  border-radius: 18px;
+  box-shadow: 0 2px 6px rgba(16,24,40,0.06);
+}
+.custom-time-controls {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:100%;
+}
+.custom-time-controls .control-row {
+  display:flex;
+  gap:8px;
+  justify-content:center;
+}
+.small-btn {
+  background:#edf2f7;
+  border:none;
+  padding:6px 10px;
+  border-radius:10px;
+  font-weight:600;
+}
+.small-btn:active{transform:translateY(1px)}
+.preset-apply-btn {
+  background:var(--accent-color,#2563eb);
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:12px;
+  font-weight:700;
+}
+
 .shake-alert-overlay.visible {
   display: flex;
 }

@@ -1374,7 +1374,81 @@ function setupTimerPresets() {
     DOM.presetBtns.forEach(b => b.classList.remove('selected'));
     selectedTimerPresetSeconds = null;
     DOM.customTimeInputs.classList.toggle('visible');
+    // initialize custom fast UI when shown
+    if (DOM.customTimeInputs.classList.contains('visible')) {
+      initCustomTimerFastUI();
+    }
   });
+}
+
+function initCustomTimerFastUI() {
+  // Ensure DOM refs exist
+  const display = document.getElementById('custom-time-display');
+  if (!display) return;
+
+  // Hidden inputs already bound in DOM.* refs
+  if (!DOM.customHours || !DOM.customMins || !DOM.customSecs) return;
+
+  // If empty or zero, set a sensible default (5 minutes)
+  let hrs = parseInt(DOM.customHours.value, 10) || 0;
+  let mins = parseInt(DOM.customMins.value, 10);
+  let secs = parseInt(DOM.customSecs.value, 10);
+  if (!mins && !secs && !hrs) {
+    mins = 5;
+    DOM.customMins.value = String(mins);
+  }
+
+  function totalSeconds() {
+    return (parseInt(DOM.customHours.value, 10) || 0) * 3600 + (parseInt(DOM.customMins.value, 10) || 0) * 60 + (parseInt(DOM.customSecs.value, 10) || 0);
+  }
+
+  function render() {
+    const t = Math.max(0, totalSeconds());
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = t % 60;
+    display.textContent = h > 0 ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  function change(delta) {
+    let t = totalSeconds() + delta;
+    if (t < 0) t = 0;
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = t % 60;
+    DOM.customHours.value = String(h);
+    DOM.customMins.value = String(m);
+    DOM.customSecs.value = String(s);
+    render();
+  }
+
+  // Wire controls (id-based)
+  const map = {
+    'dec-2m': -120,
+    'dec-30s': -30,
+    'dec-10s': -10,
+    'inc-10s': 10,
+    'inc-30s': 30,
+    'inc-2m': 120,
+    'reset-custom': 300
+  };
+
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.onclick = () => change(map[id]);
+  });
+
+  const applyBtn = document.getElementById('apply-custom-time');
+  if (applyBtn) {
+    applyBtn.onclick = () => {
+      // Select the custom duration so getTimerDuration reads it
+      selectedTimerPresetSeconds = null;
+      showToast('Custom timer set', 'success');
+    };
+  }
+
+  render();
 }
 
 function getTimerDuration() {
