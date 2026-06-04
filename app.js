@@ -800,27 +800,34 @@ function renderConnections() {
   });
 }
 
-function buildGuardianAlertPayload(userName) {
+function buildGuardianAlertPayload(userName, triggerSource = 'Timer Expiration') {
   const profile = state.profile || {};
   const lat = Number(state.gps.lat);
   const lng = Number(state.gps.lng);
   const mapsUrl = Number.isFinite(lat) && Number.isFinite(lng)
     ? `https://maps.google.com/?q=${lat.toFixed(6)},${lng.toFixed(6)}`
     : '';
+  const normalizedUser = userName || profile.fullName || 'PanicSafe user';
+  const isTimer = String(triggerSource).toLowerCase().includes('timer');
+  const type = isTimer ? 'timer_expired' : 'panic_triggered';
+  const message = isTimer
+    ? `${normalizedUser} is not responding to the PanicSafe timer.`
+    : `${normalizedUser} has triggered an immediate PanicSafe SOS alert.`;
 
   return {
-    type: 'timer_expired',
+    type,
     senderUid: state.authUser?.uid || '',
-    senderName: userName || profile.fullName || 'PanicSafe user',
-    message: `${userName || profile.fullName || 'PanicSafe user'} is not responding to the PanicSafe timer.`,
+    senderName: normalizedUser,
+    message,
     createdAtMs: Date.now(),
+    triggerSource: String(triggerSource),
     location: {
       lat,
       lng,
       mapsUrl
     },
     profile: {
-      fullName: profile.fullName || userName || 'PanicSafe user',
+      fullName: profile.fullName || normalizedUser,
       phone: profile.phone || '',
       homeArea: profile.homeArea || '',
       bloodGroup: profile.bloodGroup || '',
@@ -1637,24 +1644,29 @@ function triggerAlarmSequence(triggerSource) {
 }
 
 function notifyTimerExpiration(triggerSource) {
-  if (!String(triggerSource).toLowerCase().includes('timer')) return;
-
   const userName = state.userName || state.profile?.fullName || DOM.alertUserName.value.trim() || 'PanicSafe user';
-  const body = `${userName} is not responding to the PanicSafe timer. Emergency contacts are being alerted.`;
+  const isTimer = String(triggerSource).toLowerCase().includes('timer');
 
-  showPanicSafeNotification('PanicSafe timer expired', body, 'panicsafe-timer-expired')
+  const title = isTimer ? 'PanicSafe timer expired' : 'PanicSafe SOS Alert';
+  const body = isTimer
+    ? `${userName} is not responding to the PanicSafe timer. Emergency contacts are being alerted.`
+    : `${userName} has triggered an immediate PanicSafe SOS alert. Emergency contacts are being alerted.`;
+
+  const tag = isTimer ? 'panicsafe-timer-expired' : 'panicsafe-sos-manual';
+
+  showPanicSafeNotification(title, body, tag)
     .then((shown) => {
       if (shown) {
-        appendSOSLog('> iPhone notification dispatched for timer expiration.');
+        appendSOSLog(`> iPhone notification dispatched for ${tag}.`);
       } else {
         appendSOSLog('! iPhone notification not enabled. Open timer setup and enable notifications.');
       }
     });
 
-  notifyConnectedPanicSafeUsers(userName);
+  notifyConnectedPanicSafeUsers(userName, triggerSource);
 }
 
-async function notifyConnectedPanicSafeUsers(userName) {
+async function notifyConnectedPanicSafeUsers(userName, triggerSource = 'Timer Expiration') {
   if (!state.authUser || !window.PanicSafeFirebase) {
     appendSOSLog('! Connected-user push skipped. Firebase sign-in unavailable.');
     return;
@@ -1669,7 +1681,7 @@ async function notifyConnectedPanicSafeUsers(userName) {
       return;
     }
 
-    const alertPayload = buildGuardianAlertPayload(userName);
+    const alertPayload = buildGuardianAlertPayload(userName, triggerSource);
     const subscriptions = [];
     let firestoreAlerts = 0;
     for (const connection of connections) {
@@ -1701,7 +1713,10 @@ async function notifyConnectedPanicSafeUsers(userName) {
       return;
     }
 
-    const alertBody = `${userName} is not responding to the PanicSafe timer. Location: ${state.gps.lat.toFixed(6)}, ${state.gps.lng.toFixed(6)}`;
+    const isTimer = String(triggerSource).toLowerCase().includes('timer');
+    const alertBody = isTimer
+      ? `${userName} is not responding to the PanicSafe timer. Location: ${state.gps.lat.toFixed(6)}, ${state.gps.lng.toFixed(6)}`
+      : `${userName} has triggered a PanicSafe SOS alert. Location: ${state.gps.lat.toFixed(6)}, ${state.gps.lng.toFixed(6)}`;
     const notificationData = {
       ...alertPayload,
       url: `/?guardianAlert=${encodeURIComponent(JSON.stringify(alertPayload))}`
