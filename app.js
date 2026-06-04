@@ -125,6 +125,7 @@ const DOM = {
   startTimerBtn: document.getElementById('start-timer-btn'),
   alertUserName: document.getElementById('alert-user-name'),
   notificationPermissionBtn: document.getElementById('notification-permission-btn'),
+  shakeDetectionToggleBtn: document.getElementById('shake-detection-toggle-btn'),
   
   // Contact Configuration Elements
   contactsScrollList: document.getElementById('contacts-scroll-list'),
@@ -165,6 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeAuthFlow();
   initializeLocationStatus();
   updateNotificationButton();
+  updateShakeDetectionButton();
   updateTelemetryDisplay();
   hydrateProfileUI();
   hydrateGuardianAlertFromUrl();
@@ -226,6 +228,34 @@ function updateNotificationButton() {
   } else {
     DOM.notificationPermissionBtn.textContent = 'Enable iPhone Notifications';
   }
+}
+
+function updateShakeDetectionButton() {
+  if (!DOM.shakeDetectionToggleBtn) return;
+
+  DOM.shakeDetectionToggleBtn.classList.remove('enabled', 'blocked');
+
+  if (!shakeDetectionSupported()) {
+    DOM.shakeDetectionToggleBtn.textContent = 'Shake Detection Unavailable';
+    DOM.shakeDetectionToggleBtn.disabled = true;
+    return;
+  }
+
+  const permissionStatus = localStorage.getItem('motion_permission_status');
+  
+  if (permissionStatus === 'granted' && shakeDetectionState.permissionGranted) {
+    DOM.shakeDetectionToggleBtn.textContent = 'Shake Detection Enabled';
+    DOM.shakeDetectionToggleBtn.classList.add('enabled');
+  } else if (permissionStatus === 'denied') {
+    DOM.shakeDetectionToggleBtn.textContent = 'Shake Detection Blocked';
+    DOM.shakeDetectionToggleBtn.classList.add('blocked');
+  } else {
+    DOM.shakeDetectionToggleBtn.textContent = 'Enable Shake Detection';
+  }
+}
+
+function shakeDetectionSupported() {
+  return ('DeviceMotionEvent' in window);
 }
 
 async function requestNotificationPermission() {
@@ -2051,6 +2081,34 @@ function setupEventListeners() {
     }
   });
   DOM.notificationPermissionBtn.addEventListener('click', requestNotificationPermission);
+  if (DOM.shakeDetectionToggleBtn) {
+    DOM.shakeDetectionToggleBtn.addEventListener('click', async () => {
+      const status = localStorage.getItem('motion_permission_status');
+      // If already enabled, allow user to disable
+      if (status === 'granted' && shakeDetectionState.permissionGranted) {
+        window.removeEventListener('devicemotion', handleDeviceMotion, true);
+        shakeDetectionState.permissionGranted = false;
+        localStorage.setItem('motion_permission_status', 'disabled');
+        updateShakeDetectionButton();
+        showToast('Shake detection disabled', 'info');
+        if (typeof logActivity === 'function') logActivity('Shake detection disabled by user.');
+        return;
+      }
+
+      // Request permission / enable detection
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        await requestMotionPermission();
+      } else {
+        // Non-iOS / no permission API - start directly
+        startShakeDetection();
+        localStorage.setItem('motion_permission_status', 'granted');
+        shakeDetectionState.permissionGranted = true;
+        updateShakeDetectionButton();
+        showToast('Shake detection enabled', 'success');
+        if (typeof logActivity === 'function') logActivity('Shake detection enabled by user.');
+      }
+    });
+  }
   
   DOM.checkinBtn.addEventListener('click', () => {
     if (state.monitoringState === 'TIMER_ACTIVE') {
@@ -2234,20 +2292,8 @@ function initializeShakeDetection() {
     // Don't ask again
     console.log('Motion permission previously denied or skipped');
   } else {
-    // Show permission request after a short delay (when user is settled)
-    console.log('Will show motion permission prompt in 2 seconds');
-    setTimeout(() => {
-      if (typeof DeviceMotionEvent.requestPermission === 'function') {
-        // iOS 13+ - show our custom prompt
-        console.log('iOS device detected, showing permission prompt');
-        showMotionPermissionPrompt();
-      } else {
-        // Non-iOS or iOS < 13 - start directly
-        console.log('Non-iOS device, starting shake detection directly');
-        startShakeDetection();
-        localStorage.setItem('motion_permission_status', 'granted');
-      }
-    }, 2000);
+    // Do not auto-show a permission popup. Expose a toggle in the timer setup instead.
+    console.log('Motion permission not granted — awaiting user action via toggle');
   }
 
   // Shake alert button handlers
@@ -2320,10 +2366,12 @@ async function requestMotionPermission() {
         shakeDetectionState.permissionGranted = true;
         logActivity('Motion detection permission granted.');
         showToast('Shake detection enabled', 'success');
+        updateShakeDetectionButton();
       } else {
         localStorage.setItem('motion_permission_status', 'denied');
         console.log('Motion detection permission denied');
         showToast('Shake detection not enabled', 'info');
+        updateShakeDetectionButton();
       }
     } catch (error) {
       console.error('Motion permission request failed:', error);
@@ -2335,6 +2383,7 @@ async function requestMotionPermission() {
     startShakeDetection();
     localStorage.setItem('motion_permission_status', 'granted');
     shakeDetectionState.permissionGranted = true;
+    updateShakeDetectionButton();
   }
 }
 
