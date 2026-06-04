@@ -51,27 +51,39 @@ module.exports = async function handler(req, res) {
   const attempts = 3;
   const now = Date.now();
 
-  const sendPromises = [];
-  for (let i = 0; i < attempts; i++) {
-    const attemptPayload = JSON.stringify({
-      ...JSON.parse(payload),
-      tag: `panicsafe-connected-alert-${now}-${i}`,
-      data: { ...(JSON.parse(payload).data || {}), attempt: i }
-    });
+  const sendTasks = [];
+  const baseObj = JSON.parse(payload);
 
-    // send to all subscriptions for this attempt
+  for (let i = 0; i < attempts; i++) {
+    const attemptPayloadObj = {
+      ...baseObj,
+      tag: `panicsafe-connected-alert-${now}-${i}`,
+      data: { ...(baseObj.data || {}), attempt: i }
+    };
+    const attemptPayload = JSON.stringify(attemptPayloadObj);
+
     for (const subscription of subscriptions) {
-      sendPromises.push(webpush.sendNotification(subscription, attemptPayload).catch(err => ({ error: err.message })));
+      // capture endpoint for result mapping
+      // set a moderate TTL and high urgency to encourage delivery
+      const sendPromise = webpush.sendNotification(subscription, attemptPayload, { TTL: 60 });
+      sendTasks.push({ subscription: subscription.endpoint, attempt: i, promise: sendPromise });
     }
   }
 
-  const results = await Promise.allSettled(sendPromises);
+  // execute all sends and map results
+  const settled = await Promise.allSettled(sendTasks.map(t => t.promise));
+
+  const results = settled.map((r, idx) => {
+    const task = sendTasks[idx];
+    if (r.status === 'fulfilled') {
+      return { ok: true, endpoint: task.subscription, attempt: task.attempt };
+    }
+    const reason = r.reason && (r.reason.body || r.reason.message || (r.reason.stack && r.reason.stack.toString())) || 'unknown';
+    return { ok: false, endpoint: task.subscription, attempt: task.attempt, reason };
+  });
 
   res.status(200).json({
-    success: results.some(result => result.status === 'fulfilled'),
-    results: results.map(result => ({
-      ok: result.status === 'fulfilled',
-      reason: result.status === 'rejected' ? result.reason?.message : undefined
-    }))
+    success: results.some(r => r.ok),
+    results
   });
 };

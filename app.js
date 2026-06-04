@@ -1859,11 +1859,18 @@ async function notifyConnectedPanicSafeUsers(userName, triggerSource = 'Timer Ex
     });
     const result = await response.json();
 
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Push delivery failed.');
+    if (!response.ok) {
+      appendSOSLog('! Push delivery service returned an error.');
     }
 
-    appendSOSLog(`> PanicSafe app notification sent to ${subscriptions.length} connected device(s).`);
+    const sentCount = (result.results || []).filter(r => r.ok).length;
+    const failList = (result.results || []).filter(r => !r.ok).map(r => ({ endpoint: r.endpoint, reason: r.reason }));
+
+    appendSOSLog(`> PanicSafe app notification attempts: ${sentCount} succeeded, ${failList.length} failed.`);
+    if (failList.length) {
+      failList.slice(0, 10).forEach(f => appendSOSLog(`! Push failed for endpoint: ${f.endpoint} — ${f.reason}`));
+      showToast(`${failList.length} connected devices did not receive push notifications.`, 'info');
+    }
   } catch (err) {
     console.error('Connected-user push alert failed:', err);
     appendSOSLog(`! Connected-user push failed: ${err.message}`);
