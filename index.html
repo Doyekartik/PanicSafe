@@ -528,6 +528,7 @@
       <div class="shake-alert-card">
         <div class="shake-alert-icon">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="5"/>
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
           </svg>
         </div>
@@ -536,6 +537,24 @@
         <div class="shake-alert-actions">
           <button class="shake-alert-btn secondary" id="shake-alright-btn" type="button">I'm Alright</button>
           <button class="shake-alert-btn primary" id="shake-trigger-btn" type="button">Trigger Alert</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Motion Permission Request Popup -->
+    <div class="shake-alert-overlay" id="motion-permission-overlay">
+      <div class="shake-alert-card">
+        <div class="shake-alert-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+          </svg>
+        </div>
+        <h2 class="shake-alert-title">Enable Shake Detection</h2>
+        <p class="shake-alert-message">Allow PanicSafe to detect device shaking for emergency alerts. This helps trigger help when you need it most.</p>
+        <div class="shake-alert-actions">
+          <button class="shake-alert-btn secondary" id="motion-permission-skip" type="button">Skip</button>
+          <button class="shake-alert-btn primary" id="motion-permission-enable" type="button">Enable</button>
         </div>
       </div>
     </div>

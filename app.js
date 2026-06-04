@@ -2196,13 +2196,18 @@ let shakeDetectionState = {
   shakeThreshold: 15, // Sensitivity threshold
   shakeTimeout: null,
   cooldownPeriod: 3000, // 3 seconds cooldown between shake detections
-  lastShakeTime: 0
+  lastShakeTime: 0,
+  permissionGranted: false,
+  permissionAsked: false
 };
 
 function initializeShakeDetection() {
   const shakeOverlay = document.getElementById('shake-alert-overlay');
   const alrightBtn = document.getElementById('shake-alright-btn');
   const triggerBtn = document.getElementById('shake-trigger-btn');
+  const motionPermissionOverlay = document.getElementById('motion-permission-overlay');
+  const motionEnableBtn = document.getElementById('motion-permission-enable');
+  const motionSkipBtn = document.getElementById('motion-permission-skip');
 
   if (!shakeOverlay || !alrightBtn || !triggerBtn) return;
 
@@ -2212,17 +2217,29 @@ function initializeShakeDetection() {
     return;
   }
 
-  // Request permission for iOS 13+
-  if (typeof DeviceMotionEvent.requestPermission === 'function') {
-    // iOS 13+ requires explicit permission
-    // We'll request this when user first interacts with the app
-    document.addEventListener('click', requestMotionPermission, { once: true });
-  } else {
-    // Non-iOS or iOS < 13
+  // Check if permission was already asked
+  const permissionStatus = localStorage.getItem('motion_permission_status');
+  
+  if (permissionStatus === 'granted') {
     startShakeDetection();
+  } else if (permissionStatus === 'denied' || permissionStatus === 'skipped') {
+    // Don't ask again
+    console.log('Motion permission previously denied or skipped');
+  } else {
+    // Show permission request after a short delay (when user is settled)
+    setTimeout(() => {
+      if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        // iOS 13+ - show our custom prompt
+        showMotionPermissionPrompt();
+      } else {
+        // Non-iOS or iOS < 13 - start directly
+        startShakeDetection();
+        localStorage.setItem('motion_permission_status', 'granted');
+      }
+    }, 2000);
   }
 
-  // Button handlers
+  // Shake alert button handlers
   alrightBtn.addEventListener('click', () => {
     closeShakeAlert();
   });
@@ -2235,30 +2252,82 @@ function initializeShakeDetection() {
       panicBtn.click();
     }
   });
+
+  // Motion permission handlers
+  if (motionEnableBtn) {
+    motionEnableBtn.addEventListener('click', async () => {
+      await requestMotionPermission();
+      closeMotionPermissionPrompt();
+    });
+  }
+
+  if (motionSkipBtn) {
+    motionSkipBtn.addEventListener('click', () => {
+      localStorage.setItem('motion_permission_status', 'skipped');
+      closeMotionPermissionPrompt();
+      logActivity('Motion detection permission skipped by user.');
+    });
+  }
 }
 
-function requestMotionPermission() {
+function showMotionPermissionPrompt() {
+  const motionPermissionOverlay = document.getElementById('motion-permission-overlay');
+  if (motionPermissionOverlay && !shakeDetectionState.permissionAsked) {
+    motionPermissionOverlay.classList.add('visible');
+    shakeDetectionState.permissionAsked = true;
+  }
+}
+
+function closeMotionPermissionPrompt() {
+  const motionPermissionOverlay = document.getElementById('motion-permission-overlay');
+  if (motionPermissionOverlay) {
+    motionPermissionOverlay.classList.remove('visible');
+  }
+}
+
+async function requestMotionPermission() {
   if (typeof DeviceMotionEvent.requestPermission === 'function') {
-    DeviceMotionEvent.requestPermission()
-      .then(permissionState => {
-        if (permissionState === 'granted') {
-          startShakeDetection();
-          logActivity('Motion detection permission granted.');
-        } else {
-          console.log('Motion detection permission denied');
-        }
-      })
-      .catch(console.error);
+    try {
+      const permissionState = await DeviceMotionEvent.requestPermission();
+      if (permissionState === 'granted') {
+        startShakeDetection();
+        localStorage.setItem('motion_permission_status', 'granted');
+        shakeDetectionState.permissionGranted = true;
+        logActivity('Motion detection permission granted.');
+        showToast('Shake detection enabled', 'success');
+      } else {
+        localStorage.setItem('motion_permission_status', 'denied');
+        console.log('Motion detection permission denied');
+        showToast('Shake detection not enabled', 'info');
+      }
+    } catch (error) {
+      console.error('Motion permission request failed:', error);
+      localStorage.setItem('motion_permission_status', 'denied');
+      showToast('Could not enable shake detection', 'info');
+    }
+  } else {
+    // Non-iOS device
+    startShakeDetection();
+    localStorage.setItem('motion_permission_status', 'granted');
+    shakeDetectionState.permissionGranted = true;
   }
 }
 
 function startShakeDetection() {
+  if (shakeDetectionState.permissionGranted) return; // Already started
+  
   window.addEventListener('devicemotion', handleDeviceMotion, true);
+  shakeDetectionState.permissionGranted = true;
   logActivity('Shake detection activated.');
 }
 
 function handleDeviceMotion(event) {
   const current = event.accelerationIncludingGravity;
+  
+  if (!current || current.x === null || current.y === null || current.z === null) {
+    return;
+  }
+
   const currentTime = new Date().getTime();
 
   // Check cooldown period
