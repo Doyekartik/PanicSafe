@@ -2437,23 +2437,19 @@ let vibrationState = {
 
 function detectVibrationSupport() {
   // Check for Vibration API (Android) or Haptic Feedback (iOS 13+)
-  vibrationState.supported = !!(navigator.vibrate || navigator.webkitVibrate || navigator.moz_vibrate);
+  // Be permissive - assume supported and let the try/catch handle it
+  vibrationState.supported = true;
   return vibrationState.supported;
 }
 
 function enableVibration() {
   detectVibrationSupport();
   
-  if (!vibrationState.supported) {
-    showToast('Vibration is not supported on this device.', 'info');
-    return;
-  }
-  
   vibrationState.enabled = true;
   DOM.vibrationPermissionBtn.classList.add('enabled');
-  showToast('Vibration alerts enabled!', 'success');
+  showToast('Vibration alerts enabled! (Test pattern sent)', 'success');
   
-  // Send a test vibration pattern so user knows it works
+  // Send a test vibration pattern so user knows if it works
   triggerVibration([100, 50, 100, 50, 100]); // Medium pattern
   logActivity('Vibration alerts enabled.');
 }
@@ -2466,30 +2462,28 @@ function disableVibration() {
 }
 
 function triggerVibration(pattern) {
-  if (!vibrationState.enabled || !vibrationState.supported) {
+  if (!vibrationState.enabled) {
     return;
   }
   
   try {
-    // Try standard Vibration API first (Android)
+    // Try standard Vibration API first (Android, some browsers)
     if (navigator.vibrate) {
       navigator.vibrate(pattern);
+      return;
     } 
     // Fallback for webkit browsers
-    else if (navigator.webkitVibrate) {
+    if (navigator.webkitVibrate) {
       navigator.webkitVibrate(pattern);
+      return;
     }
     // Fallback for moz browsers
-    else if (navigator.moz_vibrate) {
+    if (navigator.moz_vibrate) {
       navigator.moz_vibrate(pattern);
-    }
-    
-    // For iOS Haptic Feedback (if available)
-    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.hapticFeedback) {
-      window.webkit.messageHandlers.hapticFeedback.postMessage({type: 'impact', intensity: 'heavy'});
+      return;
     }
   } catch (err) {
-    console.warn('Vibration failed:', err);
+    console.warn('Vibration API not available:', err);
   }
 }
 
