@@ -666,8 +666,6 @@ function renderAccountState() {
     DOM.profileScreen.classList.add('visible');
   } else {
     DOM.profileScreen.classList.remove('visible');
-    // User is logged in and has profile - prompt for shake detection
-    promptShakeDetectionPermission();
   }
 }
 
@@ -2226,6 +2224,32 @@ function initializeShakeDetection() {
     return;
   }
 
+  // Check if permission was already asked
+  const permissionStatus = localStorage.getItem('motion_permission_status');
+  console.log('Motion permission status:', permissionStatus);
+  
+  if (permissionStatus === 'granted') {
+    startShakeDetection();
+  } else if (permissionStatus === 'denied' || permissionStatus === 'skipped') {
+    // Don't ask again
+    console.log('Motion permission previously denied or skipped');
+  } else {
+    // Show permission request after a short delay (when user is settled)
+    console.log('Will show motion permission prompt in 2 seconds');
+    setTimeout(() => {
+      if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        // iOS 13+ - show our custom prompt
+        console.log('iOS device detected, showing permission prompt');
+        showMotionPermissionPrompt();
+      } else {
+        // Non-iOS or iOS < 13 - start directly
+        console.log('Non-iOS device, starting shake detection directly');
+        startShakeDetection();
+        localStorage.setItem('motion_permission_status', 'granted');
+      }
+    }, 2000);
+  }
+
   // Shake alert button handlers
   alrightBtn.addEventListener('click', () => {
     console.log('User clicked I\'m Alright');
@@ -2256,61 +2280,14 @@ function initializeShakeDetection() {
       console.log('User clicked Skip motion permission');
       localStorage.setItem('motion_permission_status', 'skipped');
       closeMotionPermissionPrompt();
-      if (typeof logActivity === 'function') {
-        logActivity('Motion detection permission skipped by user.');
-      }
+      logActivity('Motion detection permission skipped by user.');
     });
   }
-}
 
-  if (motionSkipBtn) {
-    motionSkipBtn.addEventListener('click', () => {
-      console.log('User clicked Skip motion permission');
-      localStorage.setItem('motion_permission_status', 'skipped');
-      closeMotionPermissionPrompt();
-      if (typeof logActivity === 'function') {
-        logActivity('Motion detection permission skipped by user.');
-      }
-    });
-  }
-}
-
-// Function to prompt for shake detection permission - called after login
-function promptShakeDetectionPermission() {
-  console.log('Checking if shake detection permission should be requested');
-  
-  // Only prompt if user is logged in
-  if (!state.authUser || !state.profile) {
-    console.log('User not logged in, skipping shake detection prompt');
-    return;
-  }
-
-  // Check if permission was already asked
-  const permissionStatus = localStorage.getItem('motion_permission_status');
-  console.log('Motion permission status:', permissionStatus);
-  
-  if (permissionStatus === 'granted') {
-    startShakeDetection();
-  } else if (permissionStatus === 'denied' || permissionStatus === 'skipped') {
-    // Don't ask again
-    console.log('Motion permission previously denied or skipped');
-  } else {
-    // Show permission request after a short delay (when user is settled)
-    console.log('Will show motion permission prompt in 2 seconds');
-    setTimeout(() => {
-      if (typeof DeviceMotionEvent.requestPermission === 'function') {
-        // iOS 13+ - show our custom prompt
-        console.log('iOS device detected, showing permission prompt');
-        showMotionPermissionPrompt();
-      } else {
-        // Non-iOS or iOS < 13 - start directly
-        console.log('Non-iOS device, starting shake detection directly');
-        startShakeDetection();
-        localStorage.setItem('motion_permission_status', 'granted');
-      }
-    }, 2000);
-  }
-}
+  // TEST BUTTON - Remove this after testing
+  // Uncomment to test shake popup manually:
+  // setTimeout(() => {
+  //   console.log('TEST: Showing shake alert manually');
   //   showShakeAlert();
   // }, 5000);
 }
