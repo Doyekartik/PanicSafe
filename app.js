@@ -2198,7 +2198,9 @@ let shakeDetectionState = {
   cooldownPeriod: 3000, // 3 seconds cooldown between shake detections
   lastShakeTime: 0,
   permissionGranted: false,
-  permissionAsked: false
+  permissionAsked: false,
+  autoTriggerTimer: null,
+  autoTriggerCountdown: 30
 };
 
 function initializeShakeDetection() {
@@ -2385,12 +2387,76 @@ function showShakeAlert() {
   if (navigator.vibrate) {
     navigator.vibrate([200, 100, 200]);
   }
+
+  // Start 30-second auto-trigger countdown
+  startAutoTriggerCountdown();
+}
+
+function startAutoTriggerCountdown() {
+  const countdownElement = document.getElementById('shake-countdown-timer');
+  if (!countdownElement) return;
+
+  // Reset countdown
+  shakeDetectionState.autoTriggerCountdown = 30;
+  countdownElement.textContent = shakeDetectionState.autoTriggerCountdown;
+
+  // Clear any existing timer
+  if (shakeDetectionState.autoTriggerTimer) {
+    clearInterval(shakeDetectionState.autoTriggerTimer);
+  }
+
+  // Start countdown
+  shakeDetectionState.autoTriggerTimer = setInterval(() => {
+    shakeDetectionState.autoTriggerCountdown--;
+    countdownElement.textContent = shakeDetectionState.autoTriggerCountdown;
+
+    // Visual warning when countdown gets low
+    if (shakeDetectionState.autoTriggerCountdown <= 10) {
+      countdownElement.parentElement.style.backgroundColor = '#fed7d7';
+      countdownElement.parentElement.style.borderColor = '#f56565';
+    }
+
+    // Auto-trigger when countdown reaches 0
+    if (shakeDetectionState.autoTriggerCountdown <= 0) {
+      clearInterval(shakeDetectionState.autoTriggerTimer);
+      autoTriggerPanicAlert();
+    }
+  }, 1000);
+}
+
+function stopAutoTriggerCountdown() {
+  if (shakeDetectionState.autoTriggerTimer) {
+    clearInterval(shakeDetectionState.autoTriggerTimer);
+    shakeDetectionState.autoTriggerTimer = null;
+  }
+}
+
+function autoTriggerPanicAlert() {
+  logActivity('Auto-triggered panic alert (no response to shake detection).');
+  closeShakeAlert();
+  
+  // Trigger the panic button
+  const panicBtn = document.getElementById('panic-trigger-btn');
+  if (panicBtn) {
+    panicBtn.click();
+  }
 }
 
 function closeShakeAlert() {
   const shakeOverlay = document.getElementById('shake-alert-overlay');
   if (shakeOverlay) {
     shakeOverlay.classList.remove('visible');
+  }
+  
+  // Stop the auto-trigger countdown
+  stopAutoTriggerCountdown();
+  
+  // Reset countdown display
+  const countdownElement = document.getElementById('shake-countdown-timer');
+  if (countdownElement) {
+    countdownElement.textContent = '30';
+    countdownElement.parentElement.style.backgroundColor = '#fff5f5';
+    countdownElement.parentElement.style.borderColor = '#fed7d7';
   }
 }
 

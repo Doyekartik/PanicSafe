@@ -2077,7 +2077,23 @@ main {
   font-size: 14px;
   color: var(--text-muted);
   line-height: 1.5;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
+}
+
+.shake-alert-countdown {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  padding: 10px 16px;
+  background-color: #fff5f5;
+  border-radius: 10px;
+  border: 1px solid #fed7d7;
+}
+
+.shake-alert-countdown strong {
+  color: var(--danger-color);
+  font-weight: 700;
+  font-size: 15px;
 }
 
 .shake-alert-actions {
@@ -2157,6 +2173,16 @@ main {
 
 :root.dark-mode .shake-alert-message {
   color: #cbd5e0;
+}
+
+:root.dark-mode .shake-alert-countdown {
+  background-color: rgba(245, 101, 101, 0.15);
+  border-color: rgba(245, 101, 101, 0.3);
+  color: #cbd5e0;
+}
+
+:root.dark-mode .shake-alert-countdown strong {
+  color: #f87171;
 }
 
 :root.dark-mode .shake-alert-btn.secondary {
