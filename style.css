@@ -2179,8 +2179,9 @@ main {
 .custom-dial-wrap { display:flex; flex-direction:column; align-items:center; gap:8px; }
 .custom-dial { width:220px; height:120px; touch-action:none; }
 .custom-dial svg { width:100%; height:100%; display:block; }
-.dial-track { stroke:#e6eefc; stroke:#cfe0ff; stroke:#e2e8f0; stroke:#cbd5e1; stroke:#e5e7eb; stroke:#dbeafe; stroke-linecap:round; }
-.dial-knob { fill:var(--accent-color,#2563eb); stroke:#fff; stroke-width:2; cursor:pointer; }
+.dial-track { stroke: linear-gradient(90deg,#cfe0ff,#bae6fd); stroke-width:14; stroke:#cfe0ff; stroke-linecap:round; stroke:#cbd5e1; }
+.dial-track { stroke:#cfe0ff; stroke-width:14; stroke-linecap:round; }
+.dial-knob { fill:var(--accent-color,#2563eb); stroke:#fff; stroke-width:3; cursor:pointer; filter: drop-shadow(0 6px 10px rgba(37,99,235,0.12)); }
 .dial-hint { font-size:0.8rem; color:#6b7280; }
 .custom-dial-actions { margin-top:6px; }
 

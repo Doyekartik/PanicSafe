@@ -1414,7 +1414,15 @@ function initCustomTimerDialUI() {
   function setFromSvgPoint(svgPoint) {
     const dx = view.cx - svgPoint.x;
     const dy = view.cy - svgPoint.y;
-    const rad = Math.atan2(dy, dx); // 0..pi for semicircle
+    // If user drags below the semicircle, snap to nearest end instead of wrapping
+    if (svgPoint.y > view.cy) {
+      // right side -> 60, left side -> 1
+      minutes = svgPoint.x >= view.cx ? 60 : 1;
+      render();
+      return;
+    }
+
+    const rad = Math.atan2(dy, dx); // expected 0..pi for semicircle
     // clamp
     const clamped = Math.max(0, Math.min(Math.PI, rad));
     const angleDeg = clamped * 180 / Math.PI;
@@ -1423,46 +1431,7 @@ function initCustomTimerDialUI() {
     render();
   }
 
-  // Draw tick marks and labels every 5 and 10 minutes
-  (function drawTicks() {
-    const ticksGroup = document.getElementById('dial-ticks');
-    if (!ticksGroup) return;
-    // Clear previous
-    while (ticksGroup.firstChild) ticksGroup.removeChild(ticksGroup.firstChild);
-
-    for (let i = 0; i < 60; i += 5) {
-      const angle = (i / 59) * Math.PI; // 0..pi
-      const outerR = view.r;
-      const innerR = view.r - (i % 10 === 0 ? 12 : 6);
-      const ox = view.cx - outerR * Math.cos(angle);
-      const oy = view.cy - outerR * Math.sin(angle);
-      const ix = view.cx - innerR * Math.cos(angle);
-      const iy = view.cy - innerR * Math.sin(angle);
-
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', String(ox));
-      line.setAttribute('y1', String(oy));
-      line.setAttribute('x2', String(ix));
-      line.setAttribute('y2', String(iy));
-      line.setAttribute('class', 'dial-tick');
-      if (i % 10 === 0) line.classList.add('major');
-      ticksGroup.appendChild(line);
-
-      if (i % 10 === 0) {
-        // label
-        const labelR = view.r - 26;
-        const lx = view.cx - labelR * Math.cos(angle);
-        const ly = view.cy - labelR * Math.sin(angle) + 4; // small vertical tweak
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', String(lx));
-        text.setAttribute('y', String(ly));
-        text.setAttribute('class', 'dial-label');
-        text.setAttribute('text-anchor', 'middle');
-        text.textContent = String(i === 0 ? 60 : i);
-        ticksGroup.appendChild(text);
-      }
-    }
-  })();
+  // No ticks/labels: a clean thick semicircle with a draggable knob
 
   function toSvgPoint(clientX, clientY) {
     const pt = svg.createSVGPoint();
