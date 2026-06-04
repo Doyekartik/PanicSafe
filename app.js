@@ -127,6 +127,7 @@ const DOM = {
   alertUserName: document.getElementById('alert-user-name'),
   notificationPermissionBtn: document.getElementById('notification-permission-btn'),
   shakeDetectionToggleBtn: document.getElementById('shake-detection-toggle-btn'),
+  vibrationPermissionBtn: document.getElementById('vibration-permission-btn'),
   
   // Contact Configuration Elements
   contactsScrollList: document.getElementById('contacts-scroll-list'),
@@ -1693,9 +1694,7 @@ function triggerPanicBtnSequence() {
   DOM.panicCountdownVal.textContent = state.panicCountdown.remaining;
   
   // Immediate vibration feedback when panic button is pressed
-  if (navigator.vibrate) {
-    navigator.vibrate([100, 50, 100]); // Quick alert on panic press
-  }
+  triggerVibration([100, 50, 100]); // Quick alert on panic press
   
   DOM.panicPreOverlay.classList.add('visible');
   playChime('tick');
@@ -1708,9 +1707,7 @@ function triggerPanicBtnSequence() {
     if (state.panicCountdown.remaining > 0) {
       playChime('tick');
       // Vibration pulse on each countdown tick
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
-      }
+      triggerVibration(50);
     } else {
       clearInterval(state.panicCountdown.intervalId);
       state.panicCountdown.intervalId = null;
@@ -1743,9 +1740,7 @@ function triggerAlarmSequence(triggerSource) {
   setMonitoringState('ALARM');
   
   // Strong vibration alert on the sender's phone
-  if (navigator.vibrate) {
-    navigator.vibrate([200, 100, 200, 100, 300]); // 5 pulses for urgent alert
-  }
+  triggerVibration([200, 100, 200, 100, 300]); // 5 pulses for urgent alert
   
   notifyTimerExpiration(triggerSource);
   
@@ -2273,6 +2268,16 @@ function setupEventListeners() {
     });
   }
   
+  if (DOM.vibrationPermissionBtn) {
+    DOM.vibrationPermissionBtn.addEventListener('click', () => {
+      if (vibrationState.enabled) {
+        disableVibration();
+      } else {
+        enableVibration();
+      }
+    });
+  }
+  
   DOM.checkinBtn.addEventListener('click', () => {
     if (state.monitoringState === 'TIMER_ACTIVE') {
       disarmSafetyTimer();
@@ -2421,9 +2426,72 @@ let shakeDetectionState = {
   permissionGranted: false,
   permissionAsked: false,
   autoTriggerTimer: null,
-  autoTriggerCountdown: 30
-  ,alertActive: false
+  autoTriggerCountdown: 30,
+  alertActive: false
 };
+
+let vibrationState = {
+  enabled: false,
+  supported: false
+};
+
+function detectVibrationSupport() {
+  // Check for Vibration API (Android) or Haptic Feedback (iOS 13+)
+  vibrationState.supported = !!(navigator.vibrate || navigator.webkitVibrate || navigator.moz_vibrate);
+  return vibrationState.supported;
+}
+
+function enableVibration() {
+  detectVibrationSupport();
+  
+  if (!vibrationState.supported) {
+    showToast('Vibration is not supported on this device.', 'info');
+    return;
+  }
+  
+  vibrationState.enabled = true;
+  DOM.vibrationPermissionBtn.classList.add('enabled');
+  showToast('Vibration alerts enabled!', 'success');
+  
+  // Send a test vibration pattern so user knows it works
+  triggerVibration([100, 50, 100, 50, 100]); // Medium pattern
+  logActivity('Vibration alerts enabled.');
+}
+
+function disableVibration() {
+  vibrationState.enabled = false;
+  DOM.vibrationPermissionBtn.classList.remove('enabled');
+  showToast('Vibration alerts disabled.', 'info');
+  logActivity('Vibration alerts disabled.');
+}
+
+function triggerVibration(pattern) {
+  if (!vibrationState.enabled || !vibrationState.supported) {
+    return;
+  }
+  
+  try {
+    // Try standard Vibration API first (Android)
+    if (navigator.vibrate) {
+      navigator.vibrate(pattern);
+    } 
+    // Fallback for webkit browsers
+    else if (navigator.webkitVibrate) {
+      navigator.webkitVibrate(pattern);
+    }
+    // Fallback for moz browsers
+    else if (navigator.moz_vibrate) {
+      navigator.moz_vibrate(pattern);
+    }
+    
+    // For iOS Haptic Feedback (if available)
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.hapticFeedback) {
+      window.webkit.messageHandlers.hapticFeedback.postMessage({type: 'impact', intensity: 'heavy'});
+    }
+  } catch (err) {
+    console.warn('Vibration failed:', err);
+  }
+}
 
 function initializeShakeDetection() {
   const shakeOverlay = document.getElementById('shake-alert-overlay');
@@ -2738,4 +2806,5 @@ function acknowledgeShake() {
 // Initialize shake detection when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   initializeShakeDetection();
+  detectVibrationSupport();
 });

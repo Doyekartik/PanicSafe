@@ -312,6 +312,24 @@
   color: #f87171;
 }
 
+:root.dark-mode .vibration-permission-btn {
+  background-color: #374151;
+  color: #f7fafc;
+  border-color: #4a5568;
+}
+
+:root.dark-mode .vibration-permission-btn.enabled {
+  background-color: rgba(104, 211, 145, 0.15);
+  border-color: #68d391;
+  color: #68d391;
+}
+
+:root.dark-mode .vibration-permission-btn.blocked {
+  background-color: rgba(245, 101, 101, 0.15);
+  border-color: #f56565;
+  color: #f87171;
+}
+
 :root.dark-mode .custom-timer-trigger {
   color: #63b3ed;
 }
@@ -1575,6 +1593,37 @@ main {
   transform: scale(0.98);
 }
 
+.vibration-permission-btn {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #cbd5e0;
+  border-radius: 21px;
+  background-color: #ffffff;
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.vibration-permission-btn.enabled {
+  border-color: var(--success-color);
+  background-color: rgba(56, 161, 105, 0.08);
+  color: var(--success-color);
+}
+
+.vibration-permission-btn.blocked {
+  border-color: #fed7d7;
+  background-color: #fff5f5;
+  color: var(--danger-color);
+}
+
+.vibration-permission-btn:active {
+  transform: scale(0.98);
+}
+
 .notification-permission-btn:active {
   transform: scale(0.98);
 }
@@ -1639,7 +1688,8 @@ main {
 
 /* Ensure permission/toggle buttons remain full width in the sheet */
 .notification-permission-btn,
-.shake-detection-toggle-btn {
+.shake-detection-toggle-btn,
+.vibration-permission-btn {
   display: block;
   width: 100%;
   padding: 12px 14px;
