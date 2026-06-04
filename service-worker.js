@@ -76,8 +76,10 @@ self.addEventListener('push', (event) => {
     body: payload.body || 'A connected PanicSafe user needs attention.',
     icon: payload.icon || '/assets/icon-192.png',
     badge: payload.badge || '/assets/icon-192.png',
-    tag: payload.tag || 'panicsafe-connected-alert',
-    requireInteraction: true,
+    tag: payload.tag || `panicsafe-connected-alert-${Date.now()}`,
+    requireInteraction: payload.requireInteraction !== undefined ? payload.requireInteraction : true,
+    renotify: payload.renotify !== undefined ? payload.renotify : true,
+    vibrate: payload.vibrate || [200, 100, 200],
     data: payload.data || { url: '/' }
   };
 

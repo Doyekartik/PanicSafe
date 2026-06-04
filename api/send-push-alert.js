@@ -37,15 +37,35 @@ module.exports = async function handler(req, res) {
     icon: '/assets/icon-192.png',
     badge: '/assets/icon-192.png',
     tag: 'panicsafe-connected-alert',
+    renotify: true,
+    requireInteraction: true,
+    vibrate: [200, 100, 200],
     data: {
       url: '/',
       ...data
     }
   });
 
-  const results = await Promise.allSettled(
-    subscriptions.map(subscription => webpush.sendNotification(subscription, payload))
-  );
+  // To increase delivery reliability, send a small burst of notifications
+  // with slightly different tags so they appear persistently until acted on.
+  const attempts = 3;
+  const now = Date.now();
+
+  const sendPromises = [];
+  for (let i = 0; i < attempts; i++) {
+    const attemptPayload = JSON.stringify({
+      ...JSON.parse(payload),
+      tag: `panicsafe-connected-alert-${now}-${i}`,
+      data: { ...(JSON.parse(payload).data || {}), attempt: i }
+    });
+
+    // send to all subscriptions for this attempt
+    for (const subscription of subscriptions) {
+      sendPromises.push(webpush.sendNotification(subscription, attemptPayload).catch(err => ({ error: err.message })));
+    }
+  }
+
+  const results = await Promise.allSettled(sendPromises);
 
   res.status(200).json({
     success: results.some(result => result.status === 'fulfilled'),
