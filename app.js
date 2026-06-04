@@ -119,6 +119,7 @@ const DOM = {
   presetBtns: document.querySelectorAll('.preset-btn'),
   customTimerToggle: document.getElementById('custom-timer-toggle'),
   customTimeInputs: document.getElementById('custom-time-inputs'),
+  timerPresets: document.querySelector('.timer-presets'),
   customHours: document.getElementById('custom-hours'),
   customMins: document.getElementById('custom-mins'),
   customSecs: document.getElementById('custom-secs'),
@@ -1374,10 +1375,11 @@ function setupTimerPresets() {
     DOM.presetBtns.forEach(b => b.classList.remove('selected'));
     selectedTimerPresetSeconds = null;
     DOM.customTimeInputs.classList.toggle('visible');
-    // initialize custom fast UI when shown
-    if (DOM.customTimeInputs.classList.contains('visible')) {
-      initCustomTimerDialUI();
-    }
+    const customVisible = DOM.customTimeInputs.classList.contains('visible');
+    // hide presets when custom dial is active, show them otherwise
+    if (DOM.timerPresets) DOM.timerPresets.style.display = customVisible ? 'none' : '';
+    // initialize custom dial when shown
+    if (customVisible) initCustomTimerDialUI();
   });
 }
 function initCustomTimerDialUI() {
