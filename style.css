@@ -715,9 +715,10 @@ body {
   }
 
   .emergency-drawer {
-    bottom: calc(16px + var(--safe-bottom));
-    left: 16px;
-    width: calc(100vw - 160px);
+    bottom: calc(12px + var(--safe-bottom));
+    left: 12px;
+    width: auto;
+    max-width: calc(100vw - 140px);
   }
 
   .emergency-drawer:not(.expanded) {
@@ -725,7 +726,8 @@ body {
   }
 
   .emergency-drawer.expanded {
-    width: calc(100vw - 32px);
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
   }
 }
 
@@ -823,12 +825,13 @@ main {
 /* --- Collapsible Emergency Numbers Drawer --- */
 .emergency-drawer {
   position: fixed;
-  bottom: calc(20px + var(--safe-bottom));
-  left: 20px;
+  bottom: calc(16px + var(--safe-bottom));
+  left: 16px;
   z-index: 50;
-  max-width: 340px;
+  max-width: 320px;
   width: calc(100vw - 40px);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
 }
 
 .emergency-drawer:not(.expanded) {
@@ -837,24 +840,24 @@ main {
 }
 
 .emergency-drawer-toggle {
-  min-height: 48px;
+  min-height: 40px;
   border: none;
   background: #ffffff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: 6px;
+  padding: 10px 14px;
   color: var(--text-dark);
   transition: all 0.3s ease;
-  border-radius: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
 .emergency-drawer.expanded .emergency-drawer-toggle {
-  border-radius: 16px 16px 0 0;
+  border-radius: 14px 14px 0 0;
   box-shadow: none;
   border-bottom: none;
 }
@@ -862,7 +865,7 @@ main {
 .emergency-drawer-toggle:hover {
   background-color: var(--bg-btn-panic);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
 }
 
 .emergency-drawer.expanded .emergency-drawer-toggle:hover {
@@ -870,18 +873,18 @@ main {
 }
 
 .emergency-drawer-toggle:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .emergency-icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: var(--danger-color);
   flex-shrink: 0;
 }
 
 .emergency-drawer-title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2px;
   color: var(--text-dark);
@@ -889,7 +892,7 @@ main {
 }
 
 .emergency-drawer-chevron {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-muted);
   transition: transform 0.3s ease;
   transform: rotate(180deg);
