@@ -18,8 +18,7 @@ const state = {
     remainingSeconds: 0,
     totalSeconds: 0,
     intervalId: null,
-    isDangerState: false,
-    broadcastIntervalId: null  // For updating location in Firestore
+    isDangerState: false
   },
   panicCountdown: {
     remaining: 3,
@@ -34,8 +33,7 @@ const state = {
   },
   map: {
     instance: null,
-    marker: null,
-    connectedUserMarkers: {}  // Track markers for connected users { uid: marker }
+    marker: null
   },
   audio: {
     ctx: null,
@@ -43,9 +41,7 @@ const state = {
     oscillator2: null,
     gainNode: null,
     sirenIntervalId: null
-  },
-  connectedUserTimers: {},  // Track active timers { uid: timerData }
-  timerUnsubscribe: null    // Unsubscribe function for Firestore listener
+  }
 };
 
 // --- Constant References ---
@@ -1561,109 +1557,7 @@ async function startSafetyTimer() {
   }
   state.timer.intervalId = setInterval(tickTimer, 1000);
   
-  // Broadcast timer to Firestore so connected users can see your location
-  if (state.authUser && window.PanicSafeFirebase) {
-    broadcastTimerToFirestore(duration);
-    listenForConnectedUserTimers();
-  }
-  
   showToast(`Safety check-in active. Disarm in ${formatTime(duration)}.`, 'success');
-}
-
-async function broadcastTimerToFirestore(durationSeconds) {
-  if (!state.authUser) return;
-  
-  try {
-    // Initial broadcast
-    await window.PanicSafeFirebase.saveActiveTimer(state.authUser.uid, {
-      durationSeconds,
-      location: { lat: state.gps.lat, lng: state.gps.lng }
-    });
-    
-    // Update location every 5 seconds while timer is active
-    if (state.timer.broadcastIntervalId) {
-      clearInterval(state.timer.broadcastIntervalId);
-    }
-    
-    state.timer.broadcastIntervalId = setInterval(async () => {
-      if (state.monitoringState === 'TIMER_ACTIVE') {
-        try {
-          await window.PanicSafeFirebase.saveActiveTimer(state.authUser.uid, {
-            durationSeconds,
-            location: { lat: state.gps.lat, lng: state.gps.lng }
-          });
-        } catch (err) {
-          console.warn('Failed to update timer location:', err);
-        }
-      }
-    }, 5000);
-  } catch (err) {
-    console.error('Failed to broadcast timer:', err);
-  }
-}
-
-function listenForConnectedUserTimers() {
-  if (!state.authUser || !window.PanicSafeFirebase) return;
-  
-  // Unsubscribe from previous listener if any
-  if (state.timerUnsubscribe) {
-    state.timerUnsubscribe();
-  }
-  
-  // Listen for all connected users' active timers
-  state.timerUnsubscribe = window.PanicSafeFirebase.listenForConnectedUserTimers(
-    state.authUser.uid,
-    (timerData) => {
-      if (timerData.status === 'active' && timerData.location) {
-        // Show marker for this connected user
-        state.connectedUserTimers[timerData.uid] = timerData;
-        updateConnectedUserMarker(timerData);
-      } else if (timerData.status === 'inactive') {
-        // Remove marker when timer is cleared
-        delete state.connectedUserTimers[timerData.uid];
-        clearConnectedUserMarker(timerData.uid);
-      }
-    }
-  );
-}
-
-function updateConnectedUserMarker(timerData) {
-  if (!state.map.instance || !timerData.location) return;
-  
-  const uid = timerData.uid;
-  const { lat, lng } = timerData.location;
-  
-  // Remove old marker if exists
-  if (state.map.connectedUserMarkers[uid]) {
-    state.map.instance.removeLayer(state.map.connectedUserMarkers[uid]);
-  }
-  
-  // Create popup with user info
-  const displayName = timerData.fullName || 'Connected User';
-  const popupText = `<strong>${displayName}</strong><br><small>🔴 On Safety Timer</small>`;
-  
-  // Create blue marker for connected user
-  const marker = window.L.marker([lat, lng], {
-    icon: window.L.icon({
-      iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI4IiBmaWxsPSIjMzg4OGZmIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==',
-      iconSize: [32, 32],
-      popupAnchor: [0, -16]
-    })
-  }).addTo(state.map.instance);
-  
-  marker.bindPopup(popupText);
-  state.map.connectedUserMarkers[uid] = marker;
-  
-  logActivity(`${displayName} is on a safety timer at ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-}
-
-function clearConnectedUserMarker(uid) {
-  if (!state.map.instance) return;
-  
-  if (state.map.connectedUserMarkers[uid]) {
-    state.map.instance.removeLayer(state.map.connectedUserMarkers[uid]);
-    delete state.map.connectedUserMarkers[uid];
-  }
 }
 
 function tickTimer() {
@@ -1737,18 +1631,6 @@ function disarmSafetyTimer() {
     state.timer.intervalId = null;
   }
   
-  if (state.timer.broadcastIntervalId) {
-    clearInterval(state.timer.broadcastIntervalId);
-    state.timer.broadcastIntervalId = null;
-  }
-  
-  // Clear from Firestore
-  if (state.authUser && window.PanicSafeFirebase) {
-    window.PanicSafeFirebase.clearActiveTimer(state.authUser.uid).catch(err => {
-      console.warn('Failed to clear timer from Firestore:', err);
-    });
-  }
-  
   setMonitoringState('IDLE');
   playChime('cancel');
   logActivity('Safety Timer disarmed. User marked safe.');
@@ -1780,18 +1662,6 @@ function expireTimerTriggerAlarm() {
   if (state.timer.intervalId) {
     clearInterval(state.timer.intervalId);
     state.timer.intervalId = null;
-  }
-  
-  if (state.timer.broadcastIntervalId) {
-    clearInterval(state.timer.broadcastIntervalId);
-    state.timer.broadcastIntervalId = null;
-  }
-  
-  // Clear from Firestore
-  if (state.authUser && window.PanicSafeFirebase) {
-    window.PanicSafeFirebase.clearActiveTimer(state.authUser.uid).catch(err => {
-      console.warn('Failed to clear timer from Firestore:', err);
-    });
   }
   
   logActivity('Timer reached 0 without check-in. Triggering SOS sequence.');

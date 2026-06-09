@@ -323,100 +323,6 @@ const ready = getRedirectResult(auth).catch((err) => {
   return null;
 });
 
-async function saveActiveTimer(userId, timerData) {
-  if (!userId || !db) {
-    throw new Error('Invalid userId or Firestore not initialized');
-  }
-  try {
-    const timerRef = doc(db, `users/${userId}/activeTimer`);
-    const payload = {
-      uid: userId,
-      startTime: serverTimestamp(),
-      durationSeconds: timerData.durationSeconds || 0,
-      endTime: timerData.endTime || null,
-      status: 'active',
-      location: timerData.location || null,
-      updatedAt: serverTimestamp()
-    };
-    await setDoc(timerRef, payload, { merge: true });
-    return true;
-  } catch (err) {
-    console.error('Failed to save active timer:', err);
-    throw err;
-  }
-}
-
-async function clearActiveTimer(userId) {
-  if (!userId || !db) {
-    throw new Error('Invalid userId or Firestore not initialized');
-  }
-  try {
-    const timerRef = doc(db, `users/${userId}/activeTimer`);
-    await setDoc(timerRef, { status: 'inactive', updatedAt: serverTimestamp() }, { merge: true });
-    return true;
-  } catch (err) {
-    console.error('Failed to clear active timer:', err);
-    throw err;
-  }
-}
-
-function listenForConnectedUserTimers(userId, callback) {
-  if (!userId || !db) {
-    console.warn('Cannot listen for timers: invalid userId or Firestore not initialized');
-    return () => {};
-  }
-
-  try {
-    const timerUnsubscribers = {};
-    
-    // Get connections first
-    const connectionsRef = collection(db, `users/${userId}/connections`);
-    
-    const unsubscribeConnections = onSnapshot(connectionsRef, (connectionsSnap) => {
-      // Get list of current connections
-      const currentConnections = new Set();
-      
-      connectionsSnap.docs.forEach((doc) => {
-        const connectionUid = doc.data().uid;
-        const fullName = doc.data().fullName || 'Connected User';
-        currentConnections.add(connectionUid);
-        
-        // If we don't have a listener for this connection, create one
-        if (!timerUnsubscribers[connectionUid]) {
-          const timerRef = doc(db, `users/${connectionUid}/activeTimer`);
-          
-          timerUnsubscribers[connectionUid] = onSnapshot(timerRef, (timerSnap) => {
-            if (timerSnap.exists()) {
-              callback({
-                uid: connectionUid,
-                fullName: fullName,
-                ...timerSnap.data()
-              });
-            }
-          });
-        }
-      });
-      
-      // Clean up listeners for connections that are no longer connected
-      Object.keys(timerUnsubscribers).forEach((uid) => {
-        if (!currentConnections.has(uid)) {
-          timerUnsubscribers[uid]();
-          delete timerUnsubscribers[uid];
-        }
-      });
-    });
-    
-    // Return a cleanup function that unsubscribes from all listeners
-    return () => {
-      unsubscribeConnections();
-      Object.values(timerUnsubscribers).forEach(unsub => unsub());
-    };
-  } catch (err) {
-    console.error('Failed to listen for connected user timers:', err);
-    return () => {};
-  }
-}
-
 window.PanicSafeFirebase = {
   auth,
   db,
@@ -435,8 +341,5 @@ window.PanicSafeFirebase = {
   sendUserAlert,
   listenForIncomingAlerts,
   getConnectionCode,
-  saveActiveTimer,
-  clearActiveTimer,
-  listenForConnectedUserTimers,
   onAuthStateChanged: (callback) => onAuthStateChanged(auth, user => callback(toAuthUser(user), user))
 };
