@@ -66,73 +66,73 @@
 :root.dark-mode .profile-field input,
 :root.dark-mode .profile-field select,
 :root.dark-mode .profile-field textarea {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: #f7fafc;
+  background-color: var(--surface-muted);
+  border-color: var(--border-soft);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .profile-field input:focus,
 :root.dark-mode .profile-field select:focus,
 :root.dark-mode .profile-field textarea:focus {
-  background-color: #374151;
-  border-color: #63b3ed;
+  background-color: var(--surface-soft);
+  border-color: var(--accent-color);
 }
 
 :root.dark-mode .alert-profile-input {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: #f7fafc;
+  background-color: var(--surface-muted);
+  border-color: var(--border-soft);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .alert-profile-input:focus {
-  background-color: #374151;
-  border-color: #63b3ed;
+  background-color: var(--surface-soft);
+  border-color: var(--accent-color);
 }
 
 :root.dark-mode .add-contact-form input,
 :root.dark-mode .add-contact-form select {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: #f7fafc;
+  background-color: var(--surface-muted);
+  border-color: var(--border-soft);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .add-contact-form input:focus,
 :root.dark-mode .add-contact-form select:focus {
-  background-color: #374151;
-  border-color: #63b3ed;
+  background-color: var(--surface-soft);
+  border-color: var(--accent-color);
 }
 
 :root.dark-mode .bottom-sheet {
-  background-color: #2d3748;
-  color: #f7fafc;
+  background-color: var(--bg-app);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .sheet-title {
-  color: #f7fafc;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .sheet-subtitle {
-  color: #cbd5e0;
+  color: var(--text-muted);
 }
 
 :root.dark-mode .preset-btn {
-  background-color: #374151;
-  color: #f7fafc;
-  border-color: #4a5568;
+  background-color: var(--surface-soft);
+  color: var(--text-dark);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .preset-btn span {
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 :root.dark-mode .time-input-group input {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: #f7fafc;
+  background-color: var(--surface-muted);
+  border-color: var(--border-soft);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .time-input-group input:focus {
-  border-color: #63b3ed;
+  border-color: var(--accent-color);
 }
 
 :root.dark-mode .emergency-drawer-toggle {
@@ -185,14 +185,14 @@
 }
 
 :root.dark-mode .connect-card {
-  background-color: #374151;
-  border-color: #4a5568;
+  background-color: var(--surface-soft);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .connect-row input {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: #f7fafc;
+  background-color: var(--surface-muted);
+  border-color: var(--border-soft);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .circle-btn {
@@ -320,79 +320,79 @@
 }
 
 :root.dark-mode .connect-row button {
-  background-color: #f7fafc;
-  color: #1a202c;
+  background-color: var(--surface-soft);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .notification-permission-btn {
-  background-color: #374151;
-  color: #f7fafc;
-  border-color: #4a5568;
+  background-color: var(--surface-soft);
+  color: var(--text-dark);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .notification-permission-btn.enabled {
-  background-color: rgba(104, 211, 145, 0.15);
-  border-color: #68d391;
-  color: #68d391;
+  background-color: rgba(52, 199, 89, 0.15);
+  border-color: var(--success-color);
+  color: var(--success-color);
 }
 
 :root.dark-mode .notification-permission-btn.blocked {
-  background-color: rgba(245, 101, 101, 0.15);
-  border-color: #f56565;
-  color: #f87171;
+  background-color: rgba(255, 69, 58, 0.15);
+  border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 :root.dark-mode .vibration-permission-btn {
-  background-color: #374151;
-  color: #f7fafc;
-  border-color: #4a5568;
+  background-color: var(--surface-soft);
+  color: var(--text-dark);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .vibration-permission-btn.enabled {
-  background-color: rgba(104, 211, 145, 0.15);
-  border-color: #68d391;
-  color: #68d391;
+  background-color: rgba(52, 199, 89, 0.15);
+  border-color: var(--success-color);
+  color: var(--success-color);
 }
 
 :root.dark-mode .vibration-permission-btn.blocked {
-  background-color: rgba(245, 101, 101, 0.15);
-  border-color: #f56565;
-  color: #f87171;
+  background-color: rgba(255, 69, 58, 0.15);
+  border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 :root.dark-mode .custom-timer-trigger {
-  color: #63b3ed;
+  color: var(--text-muted);
 }
 
 :root.dark-mode .custom-timer-trigger:hover {
-  color: #90cdf4;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .shake-detection-toggle-btn {
-  background-color: #374151;
-  color: #f7fafc;
-  border-color: #4a5568;
+  background-color: var(--surface-soft);
+  color: var(--text-dark);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .shake-detection-toggle-btn.enabled {
-  background-color: rgba(104, 211, 145, 0.15);
-  border-color: #68d391;
-  color: #68d391;
+  background-color: rgba(52, 199, 89, 0.15);
+  border-color: var(--success-color);
+  color: var(--success-color);
 }
 
 :root.dark-mode .shake-detection-toggle-btn.blocked {
-  background-color: rgba(245, 101, 101, 0.15);
-  border-color: #f56565;
-  color: #f87171;
+  background-color: rgba(255, 69, 58, 0.15);
+  border-color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 :root.dark-mode .sheet-action-btn {
-  background-color: #63b3ed;
-  color: #1a202c;
+  background-color: var(--accent-color);
+  color: #ffffff;
 }
 
 :root.dark-mode .sheet-action-btn:hover {
-  background-color: #90cdf4;
+  background-color: #0056b3;
 }
 
 :root.dark-mode .import-contact-btn {
@@ -611,14 +611,23 @@ body {
 .profile-back-btn {
   width: 40px;
   height: 40px;
-  border: none;
-  border-radius: 50%;
-  background: #ffffff;
+  border: 2px solid var(--border-soft);
+  border-radius: 20px;
+  background: var(--surface-soft);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   color: var(--text-dark);
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1;
-  box-shadow: var(--shadow-pill);
+  box-shadow: var(--shadow-soft);
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile-back-btn:hover {
+  background: var(--glass-bg);
+  border-color: var(--border-strong);
+  transform: scale(1.05);
 }
 
 .profile-section-title {
@@ -813,8 +822,8 @@ header {
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
   padding: calc(24px + var(--safe-top) + var(--island-clearance)) 20px 20px;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 80px 1fr 80px;
   align-items: center;
   border-bottom: 1px solid var(--border-soft);
   z-index: 10;
@@ -828,11 +837,31 @@ header {
   color: var(--text-dark);
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  justify-self: center;
+}
+
+.theme-toggle-btn {
+  justify-self: start;
+  width: 64px;
+  height: 32px;
+  border: 2px solid var(--border-soft);
+  border-radius: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow-subtle);
+  position: relative;
+  overflow: hidden;
 }
 
 .profile-chip {
-  position: absolute;
-  right: 18px;
+  justify-self: end;
   width: 36px;
   height: 36px;
   border: 2px solid var(--border-soft);
@@ -856,26 +885,6 @@ header {
   background: var(--glass-bg);
   border-color: var(--border-strong);
   transform: scale(1.05);
-}
-
-.theme-toggle-btn {
-  position: absolute;
-  left: 18px;
-  width: 64px;
-  height: 32px;
-  border: 2px solid var(--border-soft);
-  border-radius: 16px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: var(--shadow-subtle);
-  position: relative;
-  overflow: hidden;
 }
 
 .theme-toggle-btn::before {
@@ -1280,7 +1289,7 @@ main {
   -webkit-backdrop-filter: var(--backdrop-blur);
   color: var(--text-dark);
   box-shadow: var(--shadow-large);
-  border-color: var(--accent-color);
+  border-color: var(--border-soft);
 }
 
 .circle-btn.timer-active::before {
@@ -1417,7 +1426,7 @@ main {
 }
 
 .panic-btn:hover {
-  background: var(--glass-bg);
+  background: var(--danger-color);
   border-color: var(--danger-color);
   transform: translateY(-2px);
   box-shadow: var(--shadow-medium);
@@ -1426,17 +1435,6 @@ main {
 .panic-btn:active {
   transform: translateY(0) scale(0.98);
   box-shadow: var(--shadow-subtle);
-}
-
-.panic-btn:hover {
-  background: var(--glass-bg);
-  border-color: var(--danger-color);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-}
-
-.panic-btn:active {
-  transform: translateY(1px);
 }
 
 .panic-btn-icon {
@@ -1462,12 +1460,12 @@ main {
 
 /* Active Warning styles for Panic button */
 .panic-btn:hover .panic-btn-icon {
-  stroke: var(--danger-color);
+  stroke: #ffffff;
   transform: scale(1.1);
 }
 
 .panic-btn:hover .panic-btn-text {
-  color: var(--danger-color);
+  color: #ffffff;
 }
 
 /* Add Emergency Contacts Button */
