@@ -1,13 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,400&display=swap');
 
 :root {
-  --bg-app: #f4f6fa;
+  --bg-app: #ffffff;
   --bg-header: #ffffff;
-  --bg-btn-panic: #f7fafc;
-  --bg-btn-danger: #fff5f5;
-  --text-dark: #2d3748;
-  --text-muted: #718096;
-  --text-dimmed: #a0aec0;
+  --bg-btn-panic: #ffffff;
+  --bg-btn-danger: #ffffff;
+  --surface-soft: #ffffff;
+  --surface-muted: #ffffff;
+  --border-soft: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text-dark: #111111;
+  --text-muted: #374151;
+  --text-dimmed: #6b7280;
   --accent-color: #3182ce;
   --danger-color: #e53e3e;
   --danger-hover: #c53030;
@@ -26,17 +30,21 @@
 }
 
 :root.dark-mode {
-  --bg-app: #1a202c;
-  --bg-header: #2d3748;
-  --bg-btn-panic: #374151;
-  --bg-btn-danger: #742a2a;
-  --text-dark: #f7fafc;
-  --text-muted: #cbd5e0;
-  --text-dimmed: #9ca3af;
-  --accent-color: #63b3ed;
-  --danger-color: #f56565;
-  --danger-hover: #e53e3e;
-  --success-color: #68d391;
+  --bg-app: #000000;
+  --bg-header: #000000;
+  --bg-btn-panic: #000000;
+  --bg-btn-danger: #000000;
+  --surface-soft: #000000;
+  --surface-muted: #000000;
+  --border-soft: #000000;
+  --border-strong: #000000;
+  --text-dark: #ffffff;
+  --text-muted: #ffffff;
+  --text-dimmed: #ffffff;
+  --accent-color: #ffffff;
+  --danger-color: #ffffff;
+  --danger-hover: #ffffff;
+  --success-color: #ffffff;
 }
 
 :root.dark-mode .profile-field input,
@@ -112,13 +120,13 @@
 }
 
 :root.dark-mode .emergency-drawer-toggle {
-  background-color: #374151;
-  border-color: #4a5568;
+  background-color: var(--bg-app);
+  border-color: var(--bg-app);
 }
 
 :root.dark-mode .emergency-drawer-content {
-  background-color: #374151;
-  border-color: #4a5568;
+  background-color: var(--bg-app);
+  border-color: var(--bg-app);
 }
 
 :root.dark-mode .emergency-icon {
@@ -126,26 +134,26 @@
 }
 
 :root.dark-mode .emergency-drawer-title {
-  color: #f7fafc;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .emergency-item {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: #f7fafc;
+  background-color: var(--bg-app);
+  border-color: var(--bg-app);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .emergency-label {
-  color: #9ca3af;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .emergency-number {
-  color: #f7fafc;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .emergency-note {
-  color: #cbd5e0;
-  border-top-color: #4a5568;
+  color: var(--text-dark);
+  border-top-color: var(--bg-app);
 }
 
 :root.dark-mode .contact-item {
@@ -172,51 +180,51 @@
 }
 
 :root.dark-mode .circle-btn {
-  background-color: #374151;
-  color: #f7fafc;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  background-color: var(--bg-app);
+  color: var(--text-dark);
+  box-shadow: none;
 }
 
 :root.dark-mode .circle-btn .checkin-icon {
-  fill: #f7fafc;
+  fill: var(--text-dark);
 }
 
 :root.dark-mode .circle-btn .checkin-label {
-  color: #f7fafc;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .circle-btn.timer-active::before {
-  background-color: #4a5568;
+  background-color: var(--bg-app);
 }
 
 :root.dark-mode .panic-btn {
-  background-color: #374151;
-  color: #f7fafc;
+  background-color: var(--bg-app);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .panic-btn-icon {
-  stroke: #9ca3af;
+  stroke: var(--text-dark);
 }
 
 :root.dark-mode .panic-btn-text {
-  color: #9ca3af;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .contacts-btn {
-  border-color: #4a5568;
+  border-color: var(--bg-app);
 }
 
 :root.dark-mode .contacts-btn:hover {
-  background-color: rgba(74, 85, 104, 0.3);
+  background-color: var(--bg-app);
 }
 
 :root.dark-mode .info-text {
-  color: #9ca3af;
+  color: var(--text-dark);
 }
 
 :root.dark-mode .safety-status-btn {
-  background-color: #374151;
-  color: #f7fafc;
+  background-color: var(--bg-app);
+  color: var(--text-dark);
 }
 
 :root.dark-mode .status-indicator-row {
@@ -400,13 +408,13 @@
 html {
   height: 100%;
   width: 100%;
-  background-color: #1a202c;
+  background-color: var(--bg-app);
   overflow: hidden;
 }
 
 body {
   font-family: var(--font-body);
-  background-color: #1a202c; /* Dark backdrop to make the mobile mockup pop */
+  background-color: var(--bg-app);
   color: var(--text-dark);
   min-height: 100dvh;
   height: 100dvh;
@@ -1091,16 +1099,16 @@ main {
 .circle-btn {
   width: 180px;
   height: 180px;
-  background-color: #ffffff;
+  background-color: var(--bg-app);
   border-radius: 50%;
   border: none;
-  box-shadow: var(--shadow-circle);
+  box-shadow: none;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 2;
   position: relative;
   overflow: hidden;
@@ -1121,7 +1129,7 @@ main {
 
 .circle-btn:active {
   transform: scale(0.95);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  box-shadow: none;
 }
 
 .circle-btn .checkin-icon {
@@ -1146,9 +1154,9 @@ main {
 
 /* Circle Button Active Countdown View */
 .circle-btn.timer-active {
-  background-color: #ffffff;
+  background-color: var(--bg-app);
   color: var(--text-dark);
-  box-shadow: 0 16px 40px rgba(26, 32, 44, 0.08);
+  box-shadow: none;
 }
 
 .circle-btn.timer-active::before {
@@ -1206,8 +1214,8 @@ main {
 }
 
 .quick-action-btn {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-app);
+  border: 1px solid var(--bg-app);
   border-radius: 20px;
   padding: 6px 14px;
   font-size: 12px;
@@ -1217,7 +1225,7 @@ main {
   display: flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  box-shadow: none;
   transition: all 0.2s ease;
 }
 
@@ -1250,8 +1258,8 @@ main {
   height: 56px;
   border-radius: 18px;
   border: none;
-  background-color: #ffffff;
-  box-shadow: var(--shadow-pill);
+  background-color: var(--bg-app);
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1263,7 +1271,7 @@ main {
 .panic-btn:hover {
   background-color: var(--bg-btn-panic);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: none;
 }
 
 .panic-btn:active {
@@ -1308,7 +1316,7 @@ main {
   width: 100%;
   height: 50px;
   border-radius: 25px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--bg-app);
   background: transparent;
   display: flex;
   align-items: center;
@@ -1356,7 +1364,7 @@ main {
 }
 
 .safety-status-btn {
-  background-color: #ffffff;
+  background-color: var(--bg-app);
   border: none;
   border-radius: 18px;
   padding: 8px 12px;
@@ -1364,8 +1372,8 @@ main {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  box-shadow: none;
+  border: 1px solid var(--bg-app);
   transition: all 0.25s ease;
   min-height: 36px;
   position: fixed;
@@ -1377,7 +1385,7 @@ main {
 .safety-status-btn:hover {
   background-color: var(--bg-btn-panic);
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  box-shadow: none;
 }
 
 .safety-status-btn:active {
@@ -1387,7 +1395,7 @@ main {
 .status-icon {
   width: 14px;
   height: 14px;
-  fill: #000000;
+  fill: var(--text-dark);
 }
 
 .status-text {
