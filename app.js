@@ -18,7 +18,8 @@ const state = {
     remainingSeconds: 0,
     totalSeconds: 0,
     intervalId: null,
-    isDangerState: false
+    isDangerState: false,
+    reminderSent: false
   },
   panicCountdown: {
     remaining: 3,
@@ -1536,6 +1537,7 @@ async function startSafetyTimer() {
   state.timer.totalSeconds = duration;
   state.timer.remainingSeconds = duration;
   state.timer.isDangerState = false;
+  state.timer.reminderSent = false;
   
   setMonitoringState('TIMER_ACTIVE');
   playChime('success');
@@ -1563,6 +1565,17 @@ async function startSafetyTimer() {
 function tickTimer() {
   state.timer.remainingSeconds--;
   playChime('tick');
+
+  if (!state.timer.reminderSent && state.timer.remainingSeconds === 15) {
+    state.timer.reminderSent = true;
+    showPanicSafeNotification(
+      'PanicSafe reminder',
+      '15 seconds left before your timer ends. Check in now to stay safe.',
+      'panicsafe-15-sec-reminder'
+    );
+    logActivity('Reminder sent: 15 seconds remaining on timer.');
+    showToast('15 seconds left on your timer.', 'info');
+  }
   
   if (state.timer.remainingSeconds <= 10 && !state.timer.isDangerState) {
     state.timer.isDangerState = true;
@@ -1630,6 +1643,9 @@ function disarmSafetyTimer() {
     clearInterval(state.timer.intervalId);
     state.timer.intervalId = null;
   }
+
+  state.timer.reminderSent = false;
+  state.timer.isDangerState = false;
   
   setMonitoringState('IDLE');
   playChime('cancel');
@@ -1663,6 +1679,9 @@ function expireTimerTriggerAlarm() {
     clearInterval(state.timer.intervalId);
     state.timer.intervalId = null;
   }
+
+  state.timer.reminderSent = false;
+  state.timer.isDangerState = false;
   
   logActivity('Timer reached 0 without check-in. Triggering SOS sequence.');
   triggerAlarmSequence('Timer Expiration');
