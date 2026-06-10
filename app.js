@@ -34,7 +34,8 @@ const state = {
   },
   map: {
     instance: null,
-    marker: null
+    marker: null,
+    tileLayer: null
   },
   audio: {
     ctx: null,
@@ -1303,6 +1304,23 @@ function closeAllSheets() {
   DOM.diagnosticsSheet.classList.remove('visible');
 }
 
+function updateMapTheme() {
+  if (!state.map.instance) return;
+  
+  if (state.map.tileLayer) {
+    state.map.instance.removeLayer(state.map.tileLayer);
+  }
+  
+  const isDark = document.documentElement.classList.contains('dark-mode');
+  const tileUrl = isDark 
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    
+  state.map.tileLayer = L.tileLayer(tileUrl, {
+    maxZoom: 19
+  }).addTo(state.map.instance);
+}
+
 // ============================================================================
 // INTERACTIVE LEAFLET MAP HANDLERS
 // ============================================================================
@@ -1319,10 +1337,7 @@ function mountLeafletMap() {
           attributionControl: false
         }).setView([state.gps.lat, state.gps.lng], 16);
         
-        // CartoDB Voyager Tilelayer for clean high-contrast travel maps
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          maxZoom: 19
-        }).addTo(state.map.instance);
+        updateMapTheme();
         
         // Custom pulsing marker beacon
         const beaconIcon = L.divIcon({
@@ -2362,6 +2377,7 @@ function initializeDarkMode() {
       document.documentElement.classList.remove('dark-mode');
       localStorage.setItem('panic_safe_theme', 'light');
     }
+    updateMapTheme();
   });
 
   // Listen for system preference changes
