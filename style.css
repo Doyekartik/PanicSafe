@@ -1,50 +1,66 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,400&display=swap');
 
 :root {
-  --bg-app: #ffffff;
-  --bg-header: #ffffff;
-  --bg-btn-panic: #ffffff;
-  --bg-btn-danger: #ffffff;
-  --surface-soft: #ffffff;
-  --surface-muted: #ffffff;
-  --border-soft: #e5e7eb;
-  --border-strong: #d1d5db;
-  --text-dark: #111111;
-  --text-muted: #374151;
-  --text-dimmed: #6b7280;
-  --accent-color: #3182ce;
-  --danger-color: #e53e3e;
-  --danger-hover: #c53030;
-  --success-color: #38a169;
+  --bg-app: #f8f9fa;
+  --bg-header: rgba(248, 249, 250, 0.8);
+  --bg-btn-panic: rgba(255, 255, 255, 0.9);
+  --bg-btn-danger: rgba(255, 255, 255, 0.9);
+  --surface-soft: rgba(255, 255, 255, 0.7);
+  --surface-muted: rgba(255, 255, 255, 0.5);
+  --border-soft: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.12);
+  --text-dark: #1a1a1a;
+  --text-muted: #666666;
+  --text-dimmed: #999999;
+  --accent-color: #007AFF;
+  --danger-color: #FF3B30;
+  --danger-hover: #D70015;
+  --success-color: #34C759;
   
   --font-title: 'Lora', 'Georgia', serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   
-  --shadow-circle: 0 15px 35px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.03);
-  --shadow-pill: 0 4px 12px rgba(0, 0, 0, 0.03);
-  --shadow-modal: 0 -10px 40px rgba(0, 0, 0, 0.1);
-  --shadow-dashboard: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+  --shadow-large: 0 16px 48px rgba(0, 0, 0, 0.16), 0 8px 16px rgba(0, 0, 0, 0.08);
+  --shadow-circle: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-pill: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-dashboard: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --island-clearance: 16px;
+  
+  /* Glassmorphism effects */
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --backdrop-blur: blur(20px);
 }
 
 :root.dark-mode {
   --bg-app: #000000;
-  --bg-header: #000000;
-  --bg-btn-panic: #000000;
-  --bg-btn-danger: #000000;
-  --surface-soft: #000000;
-  --surface-muted: #000000;
-  --border-soft: #000000;
-  --border-strong: #000000;
+  --bg-header: rgba(0, 0, 0, 0.8);
+  --bg-btn-panic: rgba(28, 28, 30, 0.9);
+  --bg-btn-danger: rgba(28, 28, 30, 0.9);
+  --surface-soft: rgba(28, 28, 30, 0.7);
+  --surface-muted: rgba(28, 28, 30, 0.5);
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
   --text-dark: #ffffff;
-  --text-muted: #ffffff;
-  --text-dimmed: #ffffff;
-  --accent-color: #ffffff;
-  --danger-color: #ffffff;
-  --danger-hover: #ffffff;
-  --success-color: #ffffff;
+  --text-muted: #e5e5e7;
+  --text-dimmed: #a1a1a6;
+  --accent-color: #0A84FF;
+  --danger-color: #FF453A;
+  --danger-hover: #FF6961;
+  --success-color: #32D74B;
+  
+  /* Dark mode glassmorphism */
+  --glass-bg: rgba(28, 28, 30, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --backdrop-blur: blur(20px);
 }
 
 :root.dark-mode .profile-field input,
@@ -120,13 +136,13 @@
 }
 
 :root.dark-mode .emergency-drawer-toggle {
-  background-color: var(--bg-app);
-  border-color: var(--bg-app);
+  background: var(--glass-bg);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .emergency-drawer-content {
-  background-color: var(--bg-app);
-  border-color: var(--bg-app);
+  background: var(--glass-bg);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .emergency-icon {
@@ -138,13 +154,13 @@
 }
 
 :root.dark-mode .emergency-item {
-  background-color: var(--bg-app);
-  border-color: var(--bg-app);
+  background: var(--surface-soft);
+  border-color: var(--border-soft);
   color: var(--text-dark);
 }
 
 :root.dark-mode .emergency-label {
-  color: var(--text-dark);
+  color: var(--text-muted);
 }
 
 :root.dark-mode .emergency-number {
@@ -152,8 +168,8 @@
 }
 
 :root.dark-mode .emergency-note {
-  color: var(--text-dark);
-  border-top-color: var(--bg-app);
+  color: var(--text-muted);
+  border-top-color: var(--border-soft);
 }
 
 :root.dark-mode .contact-item {
@@ -180,9 +196,12 @@
 }
 
 :root.dark-mode .circle-btn {
-  background-color: var(--bg-app);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   color: var(--text-dark);
-  box-shadow: none;
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
 :root.dark-mode .circle-btn .checkin-icon {
@@ -194,37 +213,40 @@
 }
 
 :root.dark-mode .circle-btn.timer-active::before {
-  background-color: var(--bg-app);
+  background: var(--surface-muted);
 }
 
 :root.dark-mode .panic-btn {
-  background-color: var(--bg-app);
+  background: var(--surface-soft);
   color: var(--text-dark);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .panic-btn-icon {
-  stroke: var(--text-dark);
+  stroke: var(--text-muted);
 }
 
 :root.dark-mode .panic-btn-text {
-  color: var(--text-dark);
+  color: var(--text-muted);
 }
 
 :root.dark-mode .contacts-btn {
-  border-color: var(--bg-app);
+  border-color: var(--border-soft);
 }
 
 :root.dark-mode .contacts-btn:hover {
-  background-color: var(--bg-app);
+  background: var(--glass-bg);
+  border-color: var(--accent-color);
 }
 
 :root.dark-mode .info-text {
-  color: var(--text-dark);
+  color: var(--text-muted);
 }
 
 :root.dark-mode .safety-status-btn {
-  background-color: var(--bg-app);
+  background: var(--glass-bg);
   color: var(--text-dark);
+  border-color: var(--glass-border);
 }
 
 :root.dark-mode .status-indicator-row {
@@ -787,12 +809,14 @@ body {
 
 /* Header Section */
 header {
-  background-color: var(--bg-header);
+  background: var(--bg-header);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   padding: calc(24px + var(--safe-top) + var(--island-clearance)) 20px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid var(--border-soft);
   z-index: 10;
   position: relative;
 }
@@ -800,48 +824,82 @@ header {
 .header-title {
   font-family: var(--font-title);
   font-size: 24px;
-  font-weight: 500;
-  color: #4a5568;
+  font-weight: 600;
+  color: var(--text-dark);
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .profile-chip {
   position: absolute;
   right: 18px;
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 50%;
-  background: var(--text-dark);
-  color: #ffffff;
-  font-size: 12px;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--border-soft);
+  border-radius: 18px;
+  background: var(--surface-soft);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  color: var(--text-dark);
+  font-size: 13px;
   font-weight: 700;
   font-family: var(--font-body);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.3s ease;
+}
+
+.profile-chip:hover {
+  background: var(--glass-bg);
+  border-color: var(--border-strong);
+  transform: scale(1.05);
 }
 
 .theme-toggle-btn {
   position: absolute;
   left: 18px;
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 50%;
-  background: var(--bg-btn-panic);
-  color: var(--text-dark);
+  width: 64px;
+  height: 32px;
+  border: 2px solid var(--border-soft);
+  border-radius: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
+  padding: 2px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow-subtle);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle-btn::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: var(--surface-soft);
+  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+:root.dark-mode .theme-toggle-btn::before {
+  transform: translateX(32px);
+  background: var(--bg-btn-panic);
 }
 
 .theme-toggle-btn:hover {
-  background: var(--accent-color);
-  color: #ffffff;
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-soft);
 }
 
 .theme-toggle-btn:active {
@@ -849,13 +907,36 @@ header {
 }
 
 .theme-icon {
-  width: 18px;
-  height: 18px;
-  stroke: currentColor;
+  width: 16px;
+  height: 16px;
+  stroke: var(--text-dark);
   stroke-width: 2;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.theme-toggle-btn .theme-icon:first-child {
+  left: 6px;
+  opacity: 1;
+}
+
+.theme-toggle-btn .theme-icon:last-child {
+  right: 6px;
+  opacity: 0.3;
+}
+
+:root.dark-mode .theme-toggle-btn .theme-icon:first-child {
+  opacity: 0.3;
+}
+
+:root.dark-mode .theme-toggle-btn .theme-icon:last-child {
+  opacity: 1;
 }
 
 /* Main Content Area */
@@ -889,32 +970,34 @@ main {
 }
 
 .emergency-drawer-toggle {
-  min-height: 36px;
-  border: none;
-  background: #ffffff;
+  min-height: 40px;
+  border: 1.5px solid var(--border-soft);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 5px;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 10px 14px;
   color: var(--text-dark);
-  transition: all 0.3s ease;
-  border-radius: 18px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
 }
 
 .emergency-drawer.expanded .emergency-drawer-toggle {
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
   box-shadow: none;
   border-bottom: none;
 }
 
 .emergency-drawer-toggle:hover {
-  background-color: var(--bg-btn-panic);
+  background: var(--surface-soft);
+  border-color: var(--border-strong);
   transform: translateY(-2px);
-  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-medium);
 }
 
 .emergency-drawer.expanded .emergency-drawer-toggle:hover {
@@ -922,7 +1005,7 @@ main {
 }
 
 .emergency-drawer-toggle:active {
-  transform: scale(0.96);
+  transform: scale(0.98);
 }
 
 .emergency-icon {
@@ -953,10 +1036,12 @@ main {
   opacity: 0;
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-  background: #ffffff;
-  border-radius: 0 0 14px 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  border: 1px solid #e2e8f0;
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-radius: 0 0 16px 16px;
+  box-shadow: var(--shadow-medium);
+  border: 1.5px solid var(--border-soft);
   border-top: none;
 }
 
@@ -990,26 +1075,29 @@ main {
 .emergency-item {
   text-decoration: none;
   border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: #f8fafc;
-  padding: 12px;
+  border: 1.5px solid var(--border-soft);
+  background: var(--surface-soft);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-height: 60px;
+  min-height: 64px;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
 }
 
 .emergency-item:hover {
   border-color: var(--accent-color);
   background: var(--accent-color);
-  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.2);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
 }
 
 .emergency-item:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .emergency-label {
@@ -1099,20 +1187,51 @@ main {
 .circle-btn {
   width: 180px;
   height: 180px;
-  background-color: var(--bg-app);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 2px solid var(--glass-border);
   border-radius: 50%;
-  border: none;
-  box-shadow: none;
+  box-shadow: var(--shadow-circle);
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 2;
   position: relative;
   overflow: hidden;
   --timer-fill-scale: 1;
+}
+
+.circle-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(-45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.circle-btn:hover::after {
+  opacity: 1;
+  transform: rotate(45deg);
+}
+
+.circle-btn:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-large);
+  border-color: var(--border-strong);
+}
+
+.circle-btn:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-soft);
 }
 
 .circle-btn::before {
@@ -1128,35 +1247,40 @@ main {
 }
 
 .circle-btn:active {
-  transform: scale(0.95);
-  box-shadow: none;
+  transform: scale(0.98);
+  box-shadow: var(--shadow-soft);
 }
 
 .circle-btn .checkin-icon {
   width: 48px;
   height: 48px;
   margin-bottom: 12px;
-  fill: #1a202c;
-  transition: transform 0.3s ease, fill 0.3s ease;
+  fill: var(--text-dark);
+  transition: all 0.3s ease;
   position: relative;
   z-index: 1;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .circle-btn .checkin-label {
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0;
-  color: #1a202c;
+  letter-spacing: 0.5px;
+  color: var(--text-dark);
   font-family: var(--font-body);
   position: relative;
   z-index: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Circle Button Active Countdown View */
 .circle-btn.timer-active {
-  background-color: var(--bg-app);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   color: var(--text-dark);
-  box-shadow: none;
+  box-shadow: var(--shadow-large);
+  border-color: var(--accent-color);
 }
 
 .circle-btn.timer-active::before {
@@ -1214,35 +1338,40 @@ main {
 }
 
 .quick-action-btn {
-  background-color: var(--bg-app);
-  border: 1px solid var(--bg-app);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1.5px solid var(--border-soft);
   border-radius: 20px;
-  padding: 6px 14px;
+  padding: 8px 16px;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: none;
-  transition: all 0.2s ease;
+  gap: 6px;
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .quick-action-btn:hover {
-  background-color: var(--bg-btn-panic);
+  background: var(--surface-soft);
   color: var(--text-dark);
-  border-color: #cbd5e0;
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
 }
 
 .quick-action-btn.safe-disarm {
-  background-color: var(--success-color);
+  background: var(--success-color);
   color: #ffffff;
   border-color: var(--success-color);
 }
 
 .quick-action-btn.safe-disarm:hover {
-  background-color: #2f855a;
+  background: #28a745;
+  border-color: #28a745;
 }
 
 /* Panic Button Container and Pill */
@@ -1256,22 +1385,54 @@ main {
 .panic-btn {
   width: 100%;
   height: 56px;
-  border-radius: 18px;
-  border: none;
-  background-color: var(--bg-app);
-  box-shadow: none;
+  border-radius: 28px;
+  border: 1.5px solid var(--border-soft);
+  background: var(--surface-soft);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  box-shadow: var(--shadow-soft);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.panic-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.panic-btn:hover::before {
+  left: 100%;
 }
 
 .panic-btn:hover {
-  background-color: var(--bg-btn-panic);
-  transform: translateY(-1px);
-  box-shadow: none;
+  background: var(--glass-bg);
+  border-color: var(--danger-color);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.panic-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: var(--shadow-subtle);
+}
+
+.panic-btn:hover {
+  background: var(--glass-bg);
+  border-color: var(--danger-color);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
 }
 
 .panic-btn:active {
@@ -1281,23 +1442,28 @@ main {
 .panic-btn-icon {
   width: 24px;
   height: 24px;
-  stroke: var(--text-dimmed);
+  stroke: var(--text-muted);
   fill: none;
   stroke-width: 2;
-  transition: stroke 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .panic-btn-text {
   font-size: 15px;
   font-weight: 600;
-  color: var(--text-dimmed);
+  color: var(--text-muted);
   letter-spacing: 0.5px;
   font-family: var(--font-body);
+  position: relative;
+  z-index: 1;
 }
 
 /* Active Warning styles for Panic button */
 .panic-btn:hover .panic-btn-icon {
   stroke: var(--danger-color);
+  transform: scale(1.1);
 }
 
 .panic-btn:hover .panic-btn-text {
@@ -1316,19 +1482,23 @@ main {
   width: 100%;
   height: 50px;
   border-radius: 25px;
-  border: 1px solid var(--bg-app);
+  border: 1.5px solid var(--border-soft);
   background: transparent;
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .contacts-btn:hover {
-  background-color: rgba(255, 255, 255, 0.6);
-  border-color: var(--text-dimmed);
+  background: var(--glass-bg);
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
 }
 
 .contacts-btn-icon {
@@ -1364,18 +1534,19 @@ main {
 }
 
 .safety-status-btn {
-  background-color: var(--bg-app);
-  border: none;
-  border-radius: 18px;
-  padding: 8px 12px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1.5px solid var(--border-soft);
+  border-radius: 20px;
+  padding: 8px 14px;
   display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  box-shadow: none;
-  border: 1px solid var(--bg-app);
-  transition: all 0.25s ease;
-  min-height: 36px;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-height: 40px;
   position: fixed;
   bottom: calc(16px + var(--safe-bottom));
   right: 16px;
@@ -1383,13 +1554,15 @@ main {
 }
 
 .safety-status-btn:hover {
-  background-color: var(--bg-btn-panic);
-  transform: translateY(-2px);
-  box-shadow: none;
+  background: var(--surface-soft);
+  border-color: var(--accent-color);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-medium);
 }
 
 .safety-status-btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
+  box-shadow: var(--shadow-subtle);
 }
 
 .status-icon {
