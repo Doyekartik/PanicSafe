@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateTelemetryDisplay();
   hydrateProfileUI();
   hydrateGuardianAlertFromUrl();
+  initializeDarkMode();
   await synchronizeWithBackend();
   logActivity('System initialized successfully. All checks secure.');
 });
@@ -2378,11 +2379,6 @@ function initializeDarkMode() {
     });
   }
 }
-
-// Initialize dark mode when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  initializeDarkMode();
-});
 
 // ============================================================================
 // EMERGENCY HELPLINES DRAWER TOGGLE
