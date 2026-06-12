@@ -79,13 +79,13 @@
 }
 
 :root.dark-mode .alert-profile-input {
-  background-color: #2c2c2e;
-  border-color: #3a3a3c;
+  background-color: #1c1c1e;
+  border-color: #48484a;
   color: #ffffff;
 }
 
 :root.dark-mode .alert-profile-input:focus {
-  background-color: #3a3a3c;
+  background-color: #2c2c2e;
   border-color: var(--accent-color);
 }
 
@@ -106,39 +106,39 @@
 }
 
 :root.dark-mode .bottom-sheet {
-  background-color: var(--bg-app);
-  color: var(--text-dark);
+  background-color: #0a0a0a;
+  color: #ffffff;
 }
 
 :root.dark-mode .sheet-title {
-  color: var(--text-dark);
+  color: #ffffff;
 }
 
 :root.dark-mode .sheet-subtitle {
-  color: var(--text-muted);
+  color: #a1a1a6;
 }
 
 :root.dark-mode .sheet-handle {
-  background-color: #4a5568;
+  background-color: #3a3a3c;
 }
 
 :root.dark-mode .custom-time-display {
-  background-color: #2c2c2e;
-  color: var(--text-dark);
-  border-color: #3a3a3c;
+  background-color: #1c1c1e;
+  color: #ffffff;
+  border-color: #48484a;
 }
 
 :root.dark-mode .custom-dial-wrap {
-  background-color: #2c2c2e;
+  background-color: #1c1c1e;
 }
 
 :root.dark-mode .dial-track {
-  stroke: #4a5568;
+  stroke: #5a5a5c;
 }
 
 :root.dark-mode .dial-knob {
   fill: var(--accent-color);
-  stroke: #4a5568;
+  stroke: #5a5a5c;
 }
 
 :root.dark-mode .timer-presets {
@@ -146,13 +146,13 @@
 }
 
 :root.dark-mode .preset-btn {
-  background-color: #2c2c2e;
-  color: var(--text-dark);
-  border-color: #3a3a3c;
+  background-color: #1c1c1e;
+  color: #ffffff;
+  border-color: #48484a;
 }
 
 :root.dark-mode .preset-btn span {
-  color: var(--text-muted);
+  color: #a1a1a6;
 }
 
 :root.dark-mode .preset-btn:hover, 
@@ -164,17 +164,18 @@
 
 :root.dark-mode .preset-btn:hover span, 
 :root.dark-mode .preset-btn.selected span {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 :root.dark-mode .time-input-group input {
-  background-color: var(--surface-muted);
-  border-color: var(--border-soft);
-  color: var(--text-dark);
+  background-color: #1c1c1e;
+  border-color: #48484a;
+  color: #ffffff;
 }
 
 :root.dark-mode .time-input-group input:focus {
   border-color: var(--accent-color);
+  background-color: #2c2c2e;
 }
 
 :root.dark-mode .emergency-drawer-toggle {
@@ -418,63 +419,63 @@
 }
 
 :root.dark-mode .notification-permission-btn {
-  background-color: #2c2c2e;
-  color: var(--text-dark);
-  border-color: #3a3a3c;
+  background-color: #1c1c1e;
+  color: #ffffff;
+  border-color: #48484a;
 }
 
 :root.dark-mode .notification-permission-btn.enabled {
-  background-color: rgba(52, 199, 89, 0.2);
+  background-color: rgba(52, 199, 89, 0.25);
   border-color: var(--success-color);
   color: var(--success-color);
 }
 
 :root.dark-mode .notification-permission-btn.blocked {
-  background-color: rgba(255, 69, 58, 0.2);
+  background-color: rgba(255, 69, 58, 0.25);
   border-color: var(--danger-color);
   color: var(--danger-color);
 }
 
 :root.dark-mode .vibration-permission-btn {
-  background-color: #2c2c2e;
-  color: var(--text-dark);
-  border-color: #3a3a3c;
+  background-color: #1c1c1e;
+  color: #ffffff;
+  border-color: #48484a;
 }
 
 :root.dark-mode .vibration-permission-btn.enabled {
-  background-color: rgba(52, 199, 89, 0.2);
+  background-color: rgba(52, 199, 89, 0.25);
   border-color: var(--success-color);
   color: var(--success-color);
 }
 
 :root.dark-mode .vibration-permission-btn.blocked {
-  background-color: rgba(255, 69, 58, 0.2);
+  background-color: rgba(255, 69, 58, 0.25);
   border-color: var(--danger-color);
   color: var(--danger-color);
 }
 
 :root.dark-mode .custom-timer-trigger {
-  color: var(--text-muted);
+  color: var(--accent-color);
 }
 
 :root.dark-mode .custom-timer-trigger:hover {
-  color: var(--text-dark);
+  color: #64b5f6;
 }
 
 :root.dark-mode .shake-detection-toggle-btn {
-  background-color: #2c2c2e;
-  color: var(--text-dark);
-  border-color: #3a3a3c;
+  background-color: #1c1c1e;
+  color: #ffffff;
+  border-color: #48484a;
 }
 
 :root.dark-mode .shake-detection-toggle-btn.enabled {
-  background-color: rgba(52, 199, 89, 0.2);
+  background-color: rgba(52, 199, 89, 0.25);
   border-color: var(--success-color);
   color: var(--success-color);
 }
 
 :root.dark-mode .shake-detection-toggle-btn.blocked {
-  background-color: rgba(255, 69, 58, 0.2);
+  background-color: rgba(255, 69, 58, 0.25);
   border-color: var(--danger-color);
   color: var(--danger-color);
 }
@@ -485,7 +486,7 @@
 }
 
 :root.dark-mode .sheet-action-btn:hover {
-  background-color: #0056b3;
+  background-color: #0066cc;
 }
 
 :root.dark-mode .import-contact-btn {
@@ -1273,11 +1274,7 @@ main {
 }
 
 .timer-ring-progress {
-  fill: none;
-  stroke: var(--text-muted);
-  stroke-width: 6;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.1s linear;
+  display: none;
 }
 
 .timer-ring-progress.danger {
@@ -1978,6 +1975,14 @@ main {
   background: var(--bg-btn-panic);
   text-align: center;
   font-weight: 700;
+}
+
+:root.dark-mode .notification-permission-btn,
+:root.dark-mode .shake-detection-toggle-btn,
+:root.dark-mode .vibration-permission-btn {
+  border: 1px solid #48484a;
+  background: #1c1c1e;
+  color: #ffffff;
 }
 
 /* Action button for modal forms */
