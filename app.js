@@ -1801,24 +1801,7 @@ function triggerAlarmSequence(triggerSource) {
 
 function notifyTimerExpiration(triggerSource) {
   const userName = state.userName || state.profile?.fullName || DOM.alertUserName.value.trim() || 'PanicSafe user';
-  const isTimer = String(triggerSource).toLowerCase().includes('timer');
-
-  const title = isTimer ? 'PanicSafe timer expired' : 'PanicSafe SOS Alert';
-  const body = isTimer
-    ? `${userName} is not responding to the PanicSafe timer. Emergency contacts are being alerted.`
-    : `${userName} has triggered an immediate PanicSafe SOS alert. Emergency contacts are being alerted.`;
-
-  const tag = isTimer ? 'panicsafe-timer-expired' : 'panicsafe-sos-manual';
-
-  showPanicSafeNotification(title, body, tag)
-    .then((shown) => {
-      if (shown) {
-        appendSOSLog(`> iPhone notification dispatched for ${tag}.`);
-      } else {
-        appendSOSLog('! iPhone notification not enabled. Open timer setup and enable notifications.');
-      }
-    });
-
+  
   notifyConnectedPanicSafeUsers(userName, triggerSource);
 }
 
