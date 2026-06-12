@@ -1269,9 +1269,7 @@ main {
 }
 
 .timer-ring-background {
-  fill: none;
-  stroke: var(--border-soft);
-  stroke-width: 6;
+  display: none;
 }
 
 .timer-ring-progress {
