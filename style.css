@@ -949,6 +949,24 @@ body {
     bottom: calc(12px + var(--safe-bottom));
     right: 12px;
   }
+
+  #status-dashboard-btn {
+    display: flex;
+  }
+
+  #status-dashboard-btn-mobile {
+    display: none;
+  }
+}
+
+@media (display-mode: standalone), (max-width: 520px) {
+  #status-dashboard-btn {
+    display: none;
+  }
+
+  #status-dashboard-btn-mobile {
+    display: flex;
+  }
 }
 
 @keyframes flash-bezel {

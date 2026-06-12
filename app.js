@@ -95,6 +95,7 @@ const DOM = {
   panicTriggerBtn: document.getElementById('panic-trigger-btn'),
   contactsTriggerBtn: document.getElementById('contacts-trigger-btn'),
   statusDashboardBtn: document.getElementById('status-dashboard-btn'),
+  statusDashboardBtnMobile: document.getElementById('status-dashboard-btn-mobile'),
   
   // Collapsible Map View
   mapViewBoxContainer: document.getElementById('map-view-box-container'),
@@ -2296,6 +2297,12 @@ function setupEventListeners() {
   DOM.statusDashboardBtn.addEventListener('click', () => {
     openSheet(DOM.diagnosticsSheet);
   });
+  
+  if (DOM.statusDashboardBtnMobile) {
+    DOM.statusDashboardBtnMobile.addEventListener('click', () => {
+      openSheet(DOM.diagnosticsSheet);
+    });
+  }
   
   setupTimerPresets();
   DOM.startTimerBtn.addEventListener('click', startSafetyTimer);
