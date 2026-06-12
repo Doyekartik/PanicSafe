@@ -549,6 +549,34 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
+@media (display-mode: standalone), (max-width: 520px) {
+  body {
+    background-color: var(--bg-app);
+    align-items: stretch;
+    justify-content: stretch;
+    min-height: 100dvh;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .app-mockup {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-app);
+  }
+}
+
 /* Device mockup container to make it look premium on desktop */
 .app-mockup {
   width: 393px;         /* iPhone 15 logical width */
@@ -875,6 +903,7 @@ body {
     height: 100dvh;
     width: 100vw;
     overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   .app-mockup {
@@ -889,7 +918,16 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    background-color: var(--bg-app);
   }
+  
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+}
 
   .emergency-drawer {
     bottom: calc(12px + var(--safe-bottom));
