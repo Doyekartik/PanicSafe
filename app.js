@@ -946,7 +946,7 @@ async function synchronizeWithBackend() {
     const response = await fetch(API_ENDPOINT, { signal: AbortSignal.timeout(2000) });
     if (response.ok) {
       const data = await response.json();
-      state.contacts = data;
+      state.contacts = removeExampleContacts(data);
       state.backendSync = true;
       logActivity('Synchronized with Server Database (Backend Online).');
     } else {
@@ -960,20 +960,27 @@ async function synchronizeWithBackend() {
     const stored = localStorage.getItem('panic_safe_contacts');
     if (stored) {
       try {
-        state.contacts = JSON.parse(stored);
+        state.contacts = removeExampleContacts(JSON.parse(stored));
       } catch (e) {
         state.contacts = [];
       }
     } else {
-      // Pre-fill initial defaults if clean load
-      state.contacts = [
-        { id: '1', name: 'Sarah Miller (Mom)', phone: '+1 (555) 0199', relation: 'Family' },
-        { id: '2', name: 'David Chen', phone: '+1 (555) 0142', relation: 'Friend' }
-      ];
+      state.contacts = [];
       localStorage.setItem('panic_safe_contacts', JSON.stringify(state.contacts));
     }
   }
   updateContactsListUI();
+}
+
+function removeExampleContacts(contacts) {
+  if (!Array.isArray(contacts)) return [];
+
+  const exampleNames = new Set(['sarah miller (mom)', 'david chen']);
+  const filtered = contacts.filter(contact => !exampleNames.has(String(contact.name || '').trim().toLowerCase()));
+  if (filtered.length !== contacts.length) {
+    localStorage.setItem('panic_safe_contacts', JSON.stringify(filtered));
+  }
+  return filtered;
 }
 
 function updateLocalBackup() {

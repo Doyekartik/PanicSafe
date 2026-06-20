@@ -199,7 +199,25 @@ async function loadConnections() {
   if (!user) return [];
 
   const snapshot = await getDocs(collection(db, 'users', user.uid, 'connections'));
-  return snapshot.docs.map(connectionDoc => connectionDoc.data());
+  return Promise.all(snapshot.docs.map(async (connectionDoc) => {
+    const connection = connectionDoc.data();
+    const code = normalizeConnectionCode(connection.connectionCode);
+    if (!code) return connection;
+
+    try {
+      const codeSnap = await getDoc(doc(db, 'connectCodes', code));
+      if (codeSnap.exists() && codeSnap.data().uid === connection.uid) {
+        return {
+          ...connection,
+          fullName: codeSnap.data().fullName || connection.fullName
+        };
+      }
+    } catch (err) {
+      console.warn('Could not refresh connected user name:', err);
+    }
+
+    return connection;
+  }));
 }
 
 async function savePushSubscription(subscription) {

@@ -45,18 +45,15 @@ const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || '';
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '';
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:alerts@panicsafe.app';
 
-// Default mock contacts to pre-populate the database if empty
-const DEFAULT_CONTACTS = [
-  { id: '1', name: 'Sarah Miller (Mom)', phone: '+1 (555) 0199', relation: 'Family' },
-  { id: '2', name: 'David Chen', phone: '+1 (555) 0142', relation: 'Friend' }
-];
+// Start with no mock contacts; users add their own trusted contacts.
+const DEFAULT_CONTACTS = [];
 
 // Helper: Ensure contacts database exists
 function initDatabase() {
   if (!fs.existsSync(DB_FILE)) {
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(DEFAULT_CONTACTS, null, 2), 'utf8');
-      console.log('[Database] Created initial contacts.json with mock defaults.');
+      console.log('[Database] Created initial empty contacts.json.');
     } catch (err) {
       console.error('[Database] Failed to write contacts.json:', err);
     }
