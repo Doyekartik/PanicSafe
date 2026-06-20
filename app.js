@@ -164,6 +164,7 @@ const DOM = {
 // ============================================================================
 document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
+  setupSheetDragToClose(DOM.timerSetupSheet);
   preventMobilePageZoom();
   registerServiceWorker();
   setupIncomingAlertListeners();
@@ -1301,15 +1302,58 @@ function showToast(message, type = 'info') {
 // ============================================================================
 function openSheet(sheetElement) {
   initAudio();
+  sheetElement.style.transform = '';
+  sheetElement.classList.remove('dragging');
   DOM.modalOverlay.classList.add('visible');
   sheetElement.classList.add('visible');
 }
 
 function closeAllSheets() {
   DOM.modalOverlay.classList.remove('visible');
-  DOM.timerSetupSheet.classList.remove('visible');
-  DOM.contactsSetupSheet.classList.remove('visible');
-  DOM.diagnosticsSheet.classList.remove('visible');
+  [DOM.timerSetupSheet, DOM.contactsSetupSheet, DOM.diagnosticsSheet].forEach((sheet) => {
+    sheet.classList.remove('visible', 'dragging');
+    sheet.style.transform = '';
+  });
+}
+
+function setupSheetDragToClose(sheetElement) {
+  if (!sheetElement) return;
+
+  const handle = sheetElement.querySelector('.sheet-handle');
+  const dragTarget = handle || sheetElement;
+  let startY = 0;
+  let currentY = 0;
+  let isDragging = false;
+
+  dragTarget.addEventListener('pointerdown', (event) => {
+    if (!sheetElement.classList.contains('visible')) return;
+    isDragging = true;
+    startY = event.clientY;
+    currentY = 0;
+    sheetElement.classList.add('dragging');
+    dragTarget.setPointerCapture?.(event.pointerId);
+  });
+
+  dragTarget.addEventListener('pointermove', (event) => {
+    if (!isDragging) return;
+    currentY = Math.max(0, event.clientY - startY);
+    sheetElement.style.transform = `translateY(${currentY}px)`;
+  });
+
+  const finishDrag = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    sheetElement.classList.remove('dragging');
+
+    if (currentY > 90) {
+      closeAllSheets();
+    } else {
+      sheetElement.style.transform = '';
+    }
+  };
+
+  dragTarget.addEventListener('pointerup', finishDrag);
+  dragTarget.addEventListener('pointercancel', finishDrag);
 }
 
 // ============================================================================

@@ -1806,6 +1806,173 @@ main {
   transform: translateY(0);
 }
 
+.bottom-sheet.dragging {
+  transition: none;
+}
+
+#timer-setup-sheet {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(244, 247, 251, 0.62)),
+    rgba(238, 241, 245, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-bottom: none;
+  box-shadow:
+    0 -22px 60px rgba(31, 41, 55, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(148, 163, 184, 0.14);
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+}
+
+#timer-setup-sheet .sheet-handle {
+  width: 52px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.34);
+  cursor: grab;
+  touch-action: none;
+}
+
+#timer-setup-sheet.dragging .sheet-handle {
+  cursor: grabbing;
+}
+
+#timer-setup-sheet .sheet-title {
+  color: #172033;
+}
+
+#timer-setup-sheet .sheet-subtitle {
+  color: #64748b;
+}
+
+#timer-setup-sheet .alert-profile-input,
+#timer-setup-sheet .time-input-group input {
+  background: rgba(255, 255, 255, 0.54);
+  border-color: rgba(255, 255, 255, 0.72);
+  color: #172033;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    0 8px 22px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#timer-setup-sheet .alert-profile-input:focus,
+#timer-setup-sheet .time-input-group input:focus {
+  background: rgba(255, 255, 255, 0.74);
+  border-color: rgba(125, 147, 174, 0.5);
+}
+
+#timer-setup-sheet .preset-btn,
+#timer-setup-sheet .notification-permission-btn,
+#timer-setup-sheet .shake-detection-toggle-btn,
+#timer-setup-sheet .vibration-permission-btn {
+  background: rgba(255, 255, 255, 0.48);
+  border-color: rgba(255, 255, 255, 0.7);
+  color: #1f2937;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 8px 20px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+#timer-setup-sheet .preset-btn span {
+  color: #64748b;
+}
+
+#timer-setup-sheet .preset-btn:hover,
+#timer-setup-sheet .preset-btn.selected {
+  background: rgba(226, 232, 240, 0.82);
+  border-color: rgba(148, 163, 184, 0.5);
+  color: #111827;
+}
+
+#timer-setup-sheet .preset-btn:hover span,
+#timer-setup-sheet .preset-btn.selected span {
+  color: #475569;
+}
+
+#timer-setup-sheet .sheet-action-btn {
+  background: rgba(31, 41, 55, 0.88);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 14px 28px rgba(15, 23, 42, 0.18);
+}
+
+:root.dark-mode #timer-setup-sheet {
+  background:
+    linear-gradient(180deg, rgba(42, 43, 48, 0.78), rgba(10, 10, 12, 0.76)),
+    rgba(18, 18, 20, 0.78);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 -24px 70px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+:root.dark-mode #timer-setup-sheet .sheet-handle {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+:root.dark-mode #timer-setup-sheet .sheet-title {
+  color: #f5f7fb;
+}
+
+:root.dark-mode #timer-setup-sheet .sheet-subtitle {
+  color: #a8b0bd;
+}
+
+:root.dark-mode #timer-setup-sheet .alert-profile-input,
+:root.dark-mode #timer-setup-sheet .time-input-group input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+:root.dark-mode #timer-setup-sheet .alert-profile-input:focus,
+:root.dark-mode #timer-setup-sheet .time-input-group input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+:root.dark-mode #timer-setup-sheet .preset-btn,
+:root.dark-mode #timer-setup-sheet .notification-permission-btn,
+:root.dark-mode #timer-setup-sheet .shake-detection-toggle-btn,
+:root.dark-mode #timer-setup-sheet .vibration-permission-btn {
+  background: rgba(255, 255, 255, 0.075);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+:root.dark-mode #timer-setup-sheet .preset-btn span {
+  color: #a8b0bd;
+}
+
+:root.dark-mode #timer-setup-sheet .preset-btn:hover,
+:root.dark-mode #timer-setup-sheet .preset-btn.selected {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+:root.dark-mode #timer-setup-sheet .preset-btn:hover span,
+:root.dark-mode #timer-setup-sheet .preset-btn.selected span {
+  color: #d5dbe5;
+}
+
+:root.dark-mode #timer-setup-sheet .sheet-action-btn {
+  background: rgba(248, 250, 252, 0.88);
+  color: #111827;
+}
+
 /* Visual drag indicator for sheet */
 .sheet-handle {
   width: 40px;
