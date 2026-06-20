@@ -1983,8 +1983,20 @@ function updateContactsListUI() {
         <div class="contact-phone-relation">${escapeHTML(contact.phone)} &bull; ${escapeHTML(contact.relation)}</div>
       </div>
       <div class="contact-actions">
-        <a class="call-contact-btn" href="tel:${escapeHTML(phoneHref)}">Call</a>
-        <button class="delete-contact-btn" data-id="${contact.id}">Remove</button>
+        <a class="call-contact-btn" href="tel:${escapeHTML(phoneHref)}" aria-label="Call ${escapeHTML(contact.name)}" title="Call">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1 .36 1.98.69 2.92a2 2 0 0 1-.45 2.11L8.09 10a16 16 0 0 0 6 6l1.25-1.25a2 2 0 0 1 2.11-.45c.94.33 1.92.56 2.92.69A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </a>
+        <button class="delete-contact-btn" data-id="${contact.id}" aria-label="Remove ${escapeHTML(contact.name)}" title="Remove">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 6h18"/>
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/>
+            <path d="M14 11v6"/>
+          </svg>
+        </button>
       </div>
     `;
     DOM.contactsScrollList.appendChild(el);
