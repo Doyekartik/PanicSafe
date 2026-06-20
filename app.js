@@ -1976,12 +1976,16 @@ function updateContactsListUI() {
   state.contacts.forEach(contact => {
     const el = document.createElement('div');
     el.className = 'contact-item';
+    const phoneHref = normalizePhoneHref(contact.phone);
     el.innerHTML = `
       <div class="contact-info">
         <div class="contact-name">${escapeHTML(contact.name)}</div>
         <div class="contact-phone-relation">${escapeHTML(contact.phone)} &bull; ${escapeHTML(contact.relation)}</div>
       </div>
-      <button class="delete-contact-btn" data-id="${contact.id}">Remove</button>
+      <div class="contact-actions">
+        <a class="call-contact-btn" href="tel:${escapeHTML(phoneHref)}">Call</a>
+        <button class="delete-contact-btn" data-id="${contact.id}">Remove</button>
+      </div>
     `;
     DOM.contactsScrollList.appendChild(el);
   });
@@ -1992,6 +1996,10 @@ function updateContactsListUI() {
       deleteContact(id);
     });
   });
+}
+
+function normalizePhoneHref(phone) {
+  return String(phone || '').replace(/[^\d+]/g, '');
 }
 
 async function addEmergencyContact() {

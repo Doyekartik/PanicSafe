@@ -2143,6 +2143,29 @@ main {
   color: var(--text-muted);
 }
 
+.contact-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.call-contact-btn {
+  background: rgba(49, 130, 206, 0.08);
+  border: none;
+  color: var(--accent-color);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.call-contact-btn:hover {
+  background-color: rgba(49, 130, 206, 0.14);
+}
+
 .delete-contact-btn {
   background: transparent;
   border: none;
