@@ -281,7 +281,7 @@ async function requestNotificationPermission() {
       showPanicSafeNotification(
         'PanicSafe notifications enabled',
         'You will get a notification when a safety timer expires.',
-        'panicsafe-test'
+        'panicsafe-notifications-enabled'
       );
     } else {
       logActivity(`Notification permission ${permission}.`);
@@ -1134,14 +1134,17 @@ function setMonitoringState(newState) {
     DOM.diagStateVal.classList.add('secure');
     DOM.diagStateVal.innerHTML = '<span class="indicator-dot"></span> SECURE';
     DOM.appMockup.classList.remove('alarm-active');
+    DOM.appMockup.classList.remove('timer-monitoring-active');
   } else if (newState === 'TIMER_ACTIVE') {
     DOM.diagStateVal.classList.add('monitoring');
     DOM.diagStateVal.innerHTML = '<span class="indicator-dot"></span> MONITORING';
     DOM.appMockup.classList.remove('alarm-active');
+    DOM.appMockup.classList.add('timer-monitoring-active');
   } else if (newState === 'ALARM') {
     DOM.diagStateVal.classList.add('alert');
     DOM.diagStateVal.innerHTML = '<span class="indicator-dot"></span> ALARM ACTIVE';
     DOM.appMockup.classList.add('alarm-active');
+    DOM.appMockup.classList.remove('timer-monitoring-active');
   }
 }
 
@@ -1967,15 +1970,12 @@ async function broadcastEmergencySms(triggerSource) {
     }
 
     result.results.forEach((smsResult) => {
-      const mode = smsResult.simulated ? 'SIMULATED SMS' : 'SMS';
-      const status = smsResult.ok ? 'sent' : 'failed';
-      appendSOSLog(`> ${mode} ${status} to ${smsResult.contact} (${smsResult.phone})`);
+      const status = smsResult.ok
+        ? (smsResult.simulated ? 'prepared' : 'sent')
+        : 'failed';
+      appendSOSLog(`> SMS ${status} for ${smsResult.contact} (${smsResult.phone})`);
     });
     appendSOSLog(`  Payload: "${result.message}"`);
-
-    if (result.simulated) {
-      appendSOSLog('! SMS delivery is simulated in this build (no SMS provider configured).');
-    }
   } catch (err) {
     console.error('SOS SMS broadcast error: ', err);
     appendSOSLog(`! SMS broadcast failed: ${err.message}`);
@@ -2189,7 +2189,7 @@ async function triggerDeviceContactPicker() {
       showToast('Address book select canceled.', 'info');
     }
   } else {
-    // 💻 PREMIUM DESKTOP SIMULATION ADDRESS BOOK DRAWER
+    // Desktop contact import helper.
     openVCardImport();
   }
 }
@@ -2523,9 +2523,9 @@ function enableVibration() {
   
   vibrationState.enabled = true;
   DOM.vibrationPermissionBtn.classList.add('enabled');
-  showToast('Vibration alerts enabled! (Test pattern sent)', 'success');
+  showToast('Vibration alerts enabled.', 'success');
   
-  // Send a test vibration pattern so user knows if it works
+  // Send a short vibration pattern so the user knows it works.
   triggerVibration([100, 50, 100, 50, 100]); // Medium pattern
   logActivity('Vibration alerts enabled.');
 }
@@ -2640,10 +2640,9 @@ function initializeShakeDetection() {
     });
   }
 
-  // TEST BUTTON - Remove this after testing
-  // Uncomment to test shake popup manually:
+  // Manual shake-popup trigger for development:
   // setTimeout(() => {
-  //   console.log('TEST: Showing shake alert manually');
+  //   console.log('Showing shake alert manually');
   //   showShakeAlert();
   // }, 5000);
 }

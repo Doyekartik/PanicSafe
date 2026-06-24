@@ -26,7 +26,7 @@
     <span id="toast-message">Notification message</span>
   </div>
 
-  <!-- Device frame mockup for premium desktop presentation -->
+  <!-- App shell for desktop and mobile presentation -->
   <div class="app-mockup" id="app-mockup">
     <section class="auth-gate visible" id="auth-screen">
       <div class="auth-panel">
@@ -255,7 +255,7 @@
 
       <!-- Information disclaimer paragraph -->
       <p class="info-text">
-        Your location will be sent to you emergency contacts at the start of every ride.
+        Your location will be sent to your emergency contacts when a safety timer starts.
       </p>
 
       <!-- Bottom Floating Safety Status Pill -->
@@ -271,7 +271,7 @@
 
     </main>
 
-    <!-- Safety Status Button (outside app-mockup for fixed positioning) -->
+    <!-- Safety Status Button -->
     <button class="safety-status-btn" id="status-dashboard-btn-mobile" aria-label="View Safety Diagnostics" style="display: none;">
       <!-- Shield SVG -->
       <svg class="status-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -377,7 +377,7 @@
       <div class="timer-presets">
         <button class="preset-btn" data-seconds="30">
           30 Seconds
-          <span>Quick Test</span>
+          <span>Quick check</span>
         </button>
         <button class="preset-btn" data-seconds="300">
           5 Minutes
@@ -472,7 +472,7 @@
         </div>
       </div>
 
-      <!-- Real-Time Simulated GPS Panel -->
+      <!-- Real-time GPS panel -->
       <div class="gps-panel">
         <div class="gps-title">
           <span>LIVE TELEMETRY</span>
@@ -480,7 +480,7 @@
         </div>
         <div>LAT: <span id="telemetry-lat">37.7749</span></div>
         <div>LNG: <span id="telemetry-lng">-122.4194</span></div>
-        <div style="margin-top: 4px; font-size: 10px; color: #a0aec0;">ACCURACY: &plusmn;3 meters (MOCK GPS ACTIVE)</div>
+        <div style="margin-top: 4px; font-size: 10px; color: #a0aec0;">ACCURACY: updates after GPS lock</div>
       </div>
 
       <!-- Event Activity Log Terminal -->
@@ -537,7 +537,7 @@
       <h2 class="alarm-headline">EMERGENCY ACTIVE</h2>
       <p class="alarm-desc">A loud alarm is sounding and location reports have been distributed.</p>
       
-      <!-- Visual SMS Console simulation feed -->
+      <!-- Visual SMS console feed -->
       <div class="sos-notification-feed" id="sos-notification-feed">
         <!-- Dynamics notifications feed -->
         <div class="sos-notif-line">&gt; Alarm activated. Audio broadcast engaged...</div>

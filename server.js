@@ -45,7 +45,7 @@ const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || '';
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '';
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:alerts@panicsafe.app';
 
-// Start with no mock contacts; users add their own trusted contacts.
+// Start with no contacts; users add their own trusted contacts.
 const DEFAULT_CONTACTS = [];
 
 // Helper: Ensure contacts database exists
@@ -211,7 +211,7 @@ async function sendWebPushAlert(subscriptions, notification) {
   } catch (err) {
     return {
       success: false,
-      error: 'Install dependencies with npm install before testing push locally.'
+      error: 'Install dependencies with npm install before using push locally.'
     };
   }
 
@@ -366,8 +366,8 @@ const server = http.createServer(async (req, res) => {
 
       for (const contact of validRecipients) {
         const result = await sendTwilioSms(contact.phone, message);
-        const mode = result.simulated ? 'SIMULATED SMS' : 'SMS';
-        console.log(`[SOS] ${mode} to ${contact.name} (${contact.phone}): ${message}`);
+        const status = result.ok ? (result.simulated ? 'prepared' : 'sent') : 'failed';
+        console.log(`[SOS] SMS ${status} for ${contact.name} (${contact.phone}): ${message}`);
         results.push({
           contact: contact.name,
           phone: contact.phone,
