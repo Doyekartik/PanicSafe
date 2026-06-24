@@ -156,8 +156,15 @@ const DOM = {
   
   // Toast
   toastBanner: document.getElementById('toast-banner'),
-  toastMessage: document.getElementById('toast-message')
+  toastMessage: document.getElementById('toast-message'),
+  instructionOverlay: document.getElementById('instruction-overlay'),
+  instructionTitle: document.getElementById('instruction-title'),
+  instructionMessage: document.getElementById('instruction-message'),
+  instructionOkBtn: document.getElementById('instruction-ok-btn')
 };
+
+let pendingInstructionPanels = [];
+let activeInstructionPanel = null;
 
 // ============================================================================
 // INITIALIZATION & CORE BACKEND SYNCHRONIZER
@@ -572,7 +579,7 @@ async function handleFirebaseAuthState(authUser) {
       localStorage.setItem('panic_safe_profile', JSON.stringify(remoteProfile));
       hydrateProfileUI();
       renderAccountState();
-      refreshConnectionsUI();
+      await refreshConnectionsUI();
       logActivity('Loaded Firebase profile from Firestore.');
     }
   } catch (err) {
@@ -686,7 +693,7 @@ async function saveProfile(event) {
   DOM.alertUserName.value = state.profile.fullName;
   renderAccountState();
   updateProfileChip();
-  refreshConnectionsUI();
+  await refreshConnectionsUI();
   logActivity(`Profile saved for ${state.profile.fullName}.`);
 }
 
@@ -723,6 +730,58 @@ function closeProfileEditor() {
   }
 
   DOM.profileScreen.classList.remove('visible');
+  scheduleSafetyInstructionPanels();
+}
+
+function scheduleSafetyInstructionPanels() {
+  if (!state.authUser || !state.profile) return;
+  if (DOM.profileScreen.classList.contains('visible')) return;
+
+  const panels = [];
+
+  if (localStorage.getItem('panic_safe_instruction_silent_mode') !== 'ok') {
+    panels.push({
+      key: 'panic_safe_instruction_silent_mode',
+      title: 'Sound Alert Reminder',
+      message: 'Turn off silent mode before using PanicSafe so the emergency alert sound can play loudly if your timer expires.'
+    });
+  }
+
+  if (!state.connections.length && localStorage.getItem('panic_safe_instruction_connected_users') !== 'ok') {
+    panels.push({
+      key: 'panic_safe_instruction_connected_users',
+      title: 'Connect A Trusted User',
+      message: 'Add connected users from the account section so PanicSafe can send your emergency alert and location to another PanicSafe user.'
+    });
+  }
+
+  if (!panels.length || activeInstructionPanel) return;
+
+  pendingInstructionPanels = panels;
+  showNextInstructionPanel();
+}
+
+function showNextInstructionPanel() {
+  activeInstructionPanel = pendingInstructionPanels.shift() || null;
+
+  if (!activeInstructionPanel) {
+    DOM.instructionOverlay.classList.remove('visible');
+    DOM.instructionOverlay.setAttribute('aria-hidden', 'true');
+    return;
+  }
+
+  DOM.instructionTitle.textContent = activeInstructionPanel.title;
+  DOM.instructionMessage.textContent = activeInstructionPanel.message;
+  DOM.instructionOverlay.classList.add('visible');
+  DOM.instructionOverlay.setAttribute('aria-hidden', 'false');
+  DOM.instructionOkBtn.focus({ preventScroll: true });
+}
+
+function acknowledgeInstructionPanel() {
+  if (activeInstructionPanel?.key) {
+    localStorage.setItem(activeInstructionPanel.key, 'ok');
+  }
+  showNextInstructionPanel();
 }
 
 function updateProfileChip() {
@@ -781,6 +840,7 @@ async function refreshConnectionsUI() {
     state.connections = [];
   }
   renderConnections();
+  scheduleSafetyInstructionPanels();
 }
 
 function renderConnections() {
@@ -2303,6 +2363,7 @@ function setupEventListeners() {
   document.querySelectorAll('.sheet-close-btn').forEach((button) => {
     button.addEventListener('click', closeAllSheets);
   });
+  DOM.instructionOkBtn.addEventListener('click', acknowledgeInstructionPanel);
   DOM.firebaseGoogleBtn.addEventListener('click', signInWithFirebaseGoogle);
   DOM.profileForm.addEventListener('submit', saveProfile);
   DOM.profileLogoutBtn.addEventListener('click', signOutFromPanicSafe);
