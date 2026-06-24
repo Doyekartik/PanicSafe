@@ -1973,6 +1973,204 @@ main {
   color: #111827;
 }
 
+#contacts-setup-sheet,
+#diagnostics-sheet {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(244, 247, 251, 0.62)),
+    rgba(238, 241, 245, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-bottom: none;
+  box-shadow:
+    0 -22px 60px rgba(31, 41, 55, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(148, 163, 184, 0.14);
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+}
+
+#contacts-setup-sheet .sheet-handle,
+#diagnostics-sheet .sheet-handle {
+  width: 52px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.34);
+  cursor: grab;
+  touch-action: none;
+}
+
+#contacts-setup-sheet .contacts-list-container {
+  border-bottom-color: rgba(148, 163, 184, 0.2);
+}
+
+#contacts-setup-sheet .contact-item,
+#diagnostics-sheet .status-indicator-row,
+#diagnostics-sheet .gps-panel {
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 8px 20px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+#contacts-setup-sheet .contact-item {
+  border-radius: 14px;
+  margin-bottom: 10px;
+  padding: 12px;
+}
+
+#contacts-setup-sheet .add-contact-form input,
+#contacts-setup-sheet .add-contact-form select {
+  background: rgba(255, 255, 255, 0.54);
+  border-color: rgba(255, 255, 255, 0.72);
+  color: #172033;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    0 8px 22px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#contacts-setup-sheet .call-contact-btn,
+#contacts-setup-sheet .delete-contact-btn {
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+#diagnostics-sheet .gps-panel {
+  color: #475569;
+}
+
+#diagnostics-sheet .gps-title {
+  color: #172033;
+}
+
+:root.dark-mode #contacts-setup-sheet,
+:root.dark-mode #diagnostics-sheet {
+  background:
+    linear-gradient(180deg, rgba(42, 43, 48, 0.78), rgba(10, 10, 12, 0.76)),
+    rgba(18, 18, 20, 0.78);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #d9dee7;
+  box-shadow:
+    0 -24px 70px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+:root.dark-mode #contacts-setup-sheet .sheet-handle,
+:root.dark-mode #diagnostics-sheet .sheet-handle {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+:root.dark-mode #contacts-setup-sheet .sheet-title,
+:root.dark-mode #diagnostics-sheet .sheet-title {
+  color: #f5f7fb;
+}
+
+:root.dark-mode #contacts-setup-sheet .sheet-subtitle,
+:root.dark-mode #diagnostics-sheet .sheet-subtitle {
+  color: #a8b0bd;
+}
+
+:root.dark-mode #contacts-setup-sheet .contacts-list-container {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+:root.dark-mode #contacts-setup-sheet .contacts-empty {
+  color: #a8b0bd;
+}
+
+:root.dark-mode #contacts-setup-sheet .contact-item,
+:root.dark-mode #diagnostics-sheet .status-indicator-row,
+:root.dark-mode #diagnostics-sheet .gps-panel {
+  background: rgba(255, 255, 255, 0.075) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+:root.dark-mode #contacts-setup-sheet .contact-name,
+:root.dark-mode #diagnostics-sheet .indicator-val,
+:root.dark-mode #diagnostics-sheet .gps-title {
+  color: #f8fafc;
+}
+
+:root.dark-mode #contacts-setup-sheet .contact-phone-relation,
+:root.dark-mode #diagnostics-sheet .indicator-label,
+:root.dark-mode #diagnostics-sheet .gps-panel,
+:root.dark-mode #diagnostics-sheet .log-line {
+  color: #a8b0bd;
+}
+
+:root.dark-mode #contacts-setup-sheet .add-contact-form input,
+:root.dark-mode #contacts-setup-sheet .add-contact-form select {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+:root.dark-mode #contacts-setup-sheet .add-contact-form input::placeholder {
+  color: #8d96a6;
+}
+
+:root.dark-mode #contacts-setup-sheet .add-contact-form input:focus,
+:root.dark-mode #contacts-setup-sheet .add-contact-form select:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+:root.dark-mode #contacts-setup-sheet .import-contact-btn,
+:root.dark-mode #contacts-setup-sheet .sheet-action-btn {
+  background: rgba(248, 250, 252, 0.88);
+  color: #111827;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+:root.dark-mode #contacts-setup-sheet .call-contact-btn,
+:root.dark-mode #contacts-setup-sheet .delete-contact-btn {
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+:root.dark-mode #contacts-setup-sheet .call-contact-btn {
+  color: #8ec5ff;
+}
+
+:root.dark-mode #contacts-setup-sheet .delete-contact-btn {
+  color: #ff9a94;
+}
+
+:root.dark-mode #contacts-setup-sheet .call-contact-btn:hover,
+:root.dark-mode #contacts-setup-sheet .delete-contact-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+:root.dark-mode #diagnostics-sheet .indicator-val.secure {
+  color: #6ee7a0;
+}
+
+:root.dark-mode #diagnostics-sheet .indicator-val.monitoring {
+  color: #8ec5ff;
+}
+
+:root.dark-mode #diagnostics-sheet .indicator-val.alert {
+  color: #ff9a94;
+}
+
+:root.dark-mode #diagnostics-sheet .log-time {
+  color: #d6e4ff;
+}
+
 /* Visual drag indicator for sheet */
 .sheet-handle {
   width: 40px;
