@@ -2300,6 +2300,9 @@ function normalizePhoneNumber(value) {
 // ============================================================================
 function setupEventListeners() {
   DOM.modalOverlay.addEventListener('click', closeAllSheets);
+  document.querySelectorAll('.sheet-close-btn').forEach((button) => {
+    button.addEventListener('click', closeAllSheets);
+  });
   DOM.firebaseGoogleBtn.addEventListener('click', signInWithFirebaseGoogle);
   DOM.profileForm.addEventListener('submit', saveProfile);
   DOM.profileLogoutBtn.addEventListener('click', signOutFromPanicSafe);

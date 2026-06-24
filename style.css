@@ -1822,6 +1822,68 @@ main {
   flex-direction: column;
 }
 
+.sheet-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 50%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36)),
+    rgba(255, 255, 255, 0.34);
+  color: #334155;
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px) saturate(1.35);
+  -webkit-backdrop-filter: blur(16px) saturate(1.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sheet-close-btn span {
+  display: block;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 400;
+  transform: translateY(-1px);
+}
+
+.sheet-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.66);
+  box-shadow:
+    0 14px 30px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.sheet-close-btn:active {
+  transform: scale(0.94);
+}
+
+:root.dark-mode .sheet-close-btn {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.045)),
+    rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #f8fafc;
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+:root.dark-mode .sheet-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
 .bottom-sheet.visible {
   transform: translateY(0);
 }
