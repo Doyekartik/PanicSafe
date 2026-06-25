@@ -2108,6 +2108,43 @@ main {
   color: #111827;
 }
 
+:root.dark-mode #timer-setup-sheet .custom-time-inputs {
+  background: transparent;
+}
+
+:root.dark-mode #timer-setup-sheet .custom-dial-wrap {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04)),
+    rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 14px 14px 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+:root.dark-mode #timer-setup-sheet .custom-time-display {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+:root.dark-mode #timer-setup-sheet .dial-track {
+  stroke: rgba(255, 255, 255, 0.18);
+}
+
+:root.dark-mode #timer-setup-sheet .dial-knob {
+  fill: rgba(248, 250, 252, 0.92);
+  stroke: rgba(255, 255, 255, 0.18);
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.34));
+}
+
 #contacts-setup-sheet,
 #diagnostics-sheet {
   background:
