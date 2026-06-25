@@ -1,4 +1,5 @@
 const webpush = require('web-push');
+const { verifyFirebaseRequest } = require('../lib/firebase-id-token');
 
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || '';
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '';
@@ -14,6 +15,14 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  let authUser;
+  try {
+    authUser = await verifyFirebaseRequest(req);
+  } catch (err) {
+    res.status(err.statusCode || 401).json({ error: 'Unauthorized push request.' });
+    return;
+  }
+
   if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
     res.status(500).json({ error: 'VAPID keys are not configured.' });
     return;
@@ -26,14 +35,21 @@ module.exports = async function handler(req, res) {
     data = {}
   } = req.body || {};
 
+  if (data.senderUid && data.senderUid !== authUser.uid) {
+    res.status(403).json({ error: 'Sender mismatch.' });
+    return;
+  }
+
   if (!Array.isArray(subscriptions) || subscriptions.length === 0) {
     res.status(400).json({ error: 'No push subscriptions provided.' });
     return;
   }
 
+  const safeSubscriptions = subscriptions.slice(0, 20);
+
   const payload = JSON.stringify({
-    title,
-    body,
+    title: String(title).slice(0, 90),
+    body: String(body).slice(0, 240),
     icon: '/assets/icon-192.png',
     badge: '/assets/icon-192.png',
     tag: 'panicsafe-connected-alert',
@@ -62,7 +78,7 @@ module.exports = async function handler(req, res) {
     };
     const attemptPayload = JSON.stringify(attemptPayloadObj);
 
-    for (const subscription of subscriptions) {
+    for (const subscription of safeSubscriptions) {
       // capture endpoint for result mapping
       // set a moderate TTL and high urgency to encourage delivery
       const sendPromise = webpush.sendNotification(subscription, attemptPayload, { TTL: 60 });

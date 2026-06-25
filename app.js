@@ -298,6 +298,18 @@ function updateVibrationButton() {
   }
 }
 
+async function getAuthorizedJsonHeaders() {
+  const token = await window.PanicSafeFirebase?.getCurrentIdToken?.();
+  if (!token) {
+    throw new Error('Firebase sign-in required for emergency API calls.');
+  }
+
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`
+  };
+}
+
 async function requestNotificationPermission() {
   if (!notificationsSupported()) {
     showToast('Notifications need the installed iPhone web app on iOS 16.4+.', 'info');
@@ -2172,7 +2184,7 @@ async function notifyConnectedPanicSafeUsers(userName, triggerSource = 'Timer Ex
     };
     const response = await fetch(PUSH_ALERT_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthorizedJsonHeaders(),
       body: JSON.stringify({
         subscriptions,
         title: 'PanicSafe connected user alert',
@@ -2203,6 +2215,7 @@ async function notifyConnectedPanicSafeUsers(userName, triggerSource = 'Timer Ex
 async function broadcastEmergencySms(triggerSource) {
   const payload = {
     userName: state.userName || DOM.alertUserName.value.trim() || 'PanicSafe user',
+    senderUid: state.authUser?.uid || '',
     triggerSource,
     contacts: state.contacts,
     profile: state.profile,
@@ -2215,7 +2228,7 @@ async function broadcastEmergencySms(triggerSource) {
   try {
     const response = await fetch(SOS_ALERT_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthorizedJsonHeaders(),
       body: JSON.stringify(payload)
     });
     const result = await response.json();

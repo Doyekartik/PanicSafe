@@ -7,6 +7,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const { verifyFirebaseRequest } = require('./lib/firebase-id-token');
 
 function loadEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -331,7 +332,7 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/sos-alert') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (method === 'OPTIONS') {
       res.writeHead(204);
@@ -345,9 +346,22 @@ const server = http.createServer(async (req, res) => {
     }
 
     try {
+      let authUser;
+      try {
+        authUser = await verifyFirebaseRequest(req);
+      } catch (authErr) {
+        sendJson(res, authErr.statusCode || 401, { error: 'Unauthorized emergency request.' });
+        return;
+      }
+
       const payload = await parseJsonBody(req);
+      if (payload.senderUid && payload.senderUid !== authUser.uid) {
+        sendJson(res, 403, { error: 'Sender mismatch.' });
+        return;
+      }
+
       const contacts = Array.isArray(payload.contacts) && payload.contacts.length > 0
-        ? payload.contacts
+        ? payload.contacts.slice(0, 8)
         : readDatabase();
       const validRecipients = contacts
         .map(contact => ({
@@ -361,7 +375,7 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const message = buildSosMessage(payload);
+      const message = buildSosMessage(payload).slice(0, 800);
       const results = [];
 
       for (const contact of validRecipients) {
@@ -406,16 +420,29 @@ const server = http.createServer(async (req, res) => {
     }
 
     try {
+      let authUser;
+      try {
+        authUser = await verifyFirebaseRequest(req);
+      } catch (authErr) {
+        sendJson(res, authErr.statusCode || 401, { error: 'Unauthorized push request.' });
+        return;
+      }
+
       const payload = await parseJsonBody(req);
+      if (payload.data?.senderUid && payload.data.senderUid !== authUser.uid) {
+        sendJson(res, 403, { error: 'Sender mismatch.' });
+        return;
+      }
+
       const subscriptions = Array.isArray(payload.subscriptions) ? payload.subscriptions : [];
       if (subscriptions.length === 0) {
         sendJson(res, 400, { error: 'No push subscriptions provided.' });
         return;
       }
 
-      const result = await sendWebPushAlert(subscriptions, {
-        title: payload.title || 'PanicSafe Alert',
-        body: payload.body || 'A connected PanicSafe user needs attention.',
+      const result = await sendWebPushAlert(subscriptions.slice(0, 20), {
+        title: String(payload.title || 'PanicSafe Alert').slice(0, 90),
+        body: String(payload.body || 'A connected PanicSafe user needs attention.').slice(0, 240),
         icon: '/assets/icon-192.png',
         badge: '/assets/icon-192.png',
         tag: 'panicsafe-connected-alert',

@@ -12,9 +12,22 @@ service cloud.firestore {
 
     function isConnected(userId) {
       return signedIn() && (
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)/connections/$(userId)) ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)/connections/$(userId)) &&
         exists(/databases/$(database)/documents/users/$(userId)/connections/$(request.auth.uid))
       );
+    }
+
+    function validConnectionDocFor(userId, connectionId) {
+      return signedIn()
+        && connectionId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'fullName', 'connectionCode', 'authorizedByCode', 'connectedAt'])
+        && request.resource.data.fullName is string
+        && request.resource.data.connectionCode is string
+        && request.resource.data.authorizedByCode is string
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && exists(/databases/$(database)/documents/connectCodes/$(request.resource.data.authorizedByCode))
+        && get(/databases/$(database)/documents/connectCodes/$(request.resource.data.authorizedByCode)).data.uid == userId;
     }
 
     match /users/{userId} {
@@ -22,10 +35,7 @@ service cloud.firestore {
 
       match /connections/{connectionId} {
         allow read, write: if isOwner(userId);
-        allow create, update: if signedIn()
-          && connectionId == request.auth.uid
-          && request.resource.data.uid == request.auth.uid
-          && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+        allow create, update: if validConnectionDocFor(userId, connectionId);
         allow delete: if signedIn() && connectionId == request.auth.uid;
       }
 
@@ -45,8 +55,14 @@ service cloud.firestore {
     match /connectCodes/{code} {
       allow get: if signedIn();
       allow list: if false;
-      allow create, update: if signedIn()
+      allow create: if signedIn()
         && request.resource.data.uid == request.auth.uid
+        && request.resource.data.connectionCode == code
+        && request.resource.data.keys().hasOnly(['uid', 'fullName', 'connectionCode', 'updatedAt']);
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.connectionCode == code
         && request.resource.data.keys().hasOnly(['uid', 'fullName', 'connectionCode', 'updatedAt']);
       allow delete: if signedIn() && resource != null && resource.data.uid == request.auth.uid;
     }

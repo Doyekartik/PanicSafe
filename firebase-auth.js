@@ -195,6 +195,7 @@ async function saveConnection(targetProfile) {
     uid: targetProfile.uid,
     fullName: targetProfile.fullName || 'PanicSafe user',
     connectionCode: targetProfile.connectionCode || '',
+    authorizedByCode: targetProfile.connectionCode || '',
     connectedAt: serverTimestamp()
   }, { merge: true });
 
@@ -202,6 +203,7 @@ async function saveConnection(targetProfile) {
     uid: user.uid,
     fullName: currentProfile?.fullName || user.displayName || 'PanicSafe user',
     connectionCode: currentProfile?.connectionCode || '',
+    authorizedByCode: targetProfile.connectionCode || '',
     connectedAt: serverTimestamp()
   }, { merge: true });
 }
@@ -310,6 +312,11 @@ async function signOutUser() {
   await signOut(auth);
 }
 
+async function getCurrentIdToken(forceRefresh = false) {
+  if (!auth.currentUser) return '';
+  return auth.currentUser.getIdToken(forceRefresh);
+}
+
 async function deleteCurrentUserAccount() {
   const user = auth.currentUser;
   if (!user) throw new Error('No Firebase user is signed in.');
@@ -367,6 +374,7 @@ window.PanicSafeFirebase = {
   db,
   ready,
   signInWithGoogle,
+  getCurrentIdToken,
   signOutUser,
   deleteCurrentUserAccount,
   loadUserProfile,

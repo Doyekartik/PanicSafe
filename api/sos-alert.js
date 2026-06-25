@@ -1,4 +1,5 @@
 const https = require('https');
+const { verifyFirebaseRequest } = require('../lib/firebase-id-token');
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || '';
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN || '';
@@ -105,9 +106,16 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    const authUser = await verifyFirebaseRequest(req);
     const payload = parseBody(req);
+    if (payload.senderUid && payload.senderUid !== authUser.uid) {
+      res.status(403).json({ error: 'Sender mismatch.' });
+      return;
+    }
+
     const contacts = Array.isArray(payload.contacts) ? payload.contacts : [];
     const validRecipients = contacts
+      .slice(0, 8)
       .map(contact => ({
         name: String(contact.name || 'Emergency contact').trim(),
         phone: normalizeSmsPhone(contact.phone)
@@ -119,7 +127,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    const message = buildSosMessage(payload);
+    const message = buildSosMessage(payload).slice(0, 800);
     const results = [];
 
     for (const contact of validRecipients) {
@@ -139,6 +147,10 @@ module.exports = async function handler(req, res) {
       results
     });
   } catch (err) {
+    if (err.statusCode === 401 || err.statusCode === 403) {
+      res.status(err.statusCode).json({ error: 'Unauthorized emergency request.' });
+      return;
+    }
     res.status(500).json({ error: 'Failed to process SOS alert.' });
   }
 };
