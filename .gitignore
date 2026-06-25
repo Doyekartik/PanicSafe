@@ -1,2 +1,4 @@
 .env
 contacts.json
+node_modules/
+android/app/build/
