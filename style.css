@@ -2421,6 +2421,9 @@ main {
   border-color: var(--success-color);
   background-color: rgba(56, 161, 105, 0.08);
   color: var(--success-color);
+  box-shadow:
+    0 0 0 2px rgba(52, 199, 89, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
 }
 
 .notification-permission-btn.blocked {
@@ -2448,6 +2451,9 @@ main {
   border-color: var(--success-color);
   background-color: rgba(56, 161, 105, 0.08);
   color: var(--success-color);
+  box-shadow:
+    0 0 0 2px rgba(52, 199, 89, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
 }
 
 .shake-detection-toggle-btn.blocked {
@@ -2479,6 +2485,9 @@ main {
   border-color: var(--success-color);
   background-color: rgba(56, 161, 105, 0.08);
   color: var(--success-color);
+  box-shadow:
+    0 0 0 2px rgba(52, 199, 89, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
 }
 
 .vibration-permission-btn.blocked {

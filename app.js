@@ -179,6 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeLocationStatus();
   updateNotificationButton();
   updateShakeDetectionButton();
+  updateVibrationButton();
   updateTelemetryDisplay();
   hydrateProfileUI();
   hydrateGuardianAlertFromUrl();
@@ -247,16 +248,18 @@ function updateShakeDetectionButton() {
   if (!DOM.shakeDetectionToggleBtn) return;
 
   DOM.shakeDetectionToggleBtn.classList.remove('enabled', 'blocked');
+  DOM.shakeDetectionToggleBtn.disabled = false;
 
   if (!shakeDetectionSupported()) {
     DOM.shakeDetectionToggleBtn.textContent = 'Shake Detection Unavailable';
+    DOM.shakeDetectionToggleBtn.classList.add('blocked');
     DOM.shakeDetectionToggleBtn.disabled = true;
     return;
   }
 
   const permissionStatus = localStorage.getItem('motion_permission_status');
   
-  if (permissionStatus === 'granted' && shakeDetectionState.permissionGranted) {
+  if (permissionStatus === 'granted' || shakeDetectionState.permissionGranted) {
     DOM.shakeDetectionToggleBtn.textContent = 'Shake Detection Enabled';
     DOM.shakeDetectionToggleBtn.classList.add('enabled');
   } else if (permissionStatus === 'denied') {
@@ -269,6 +272,28 @@ function updateShakeDetectionButton() {
 
 function shakeDetectionSupported() {
   return ('DeviceMotionEvent' in window);
+}
+
+function updateVibrationButton() {
+  if (!DOM.vibrationPermissionBtn) return;
+
+  DOM.vibrationPermissionBtn.classList.remove('enabled', 'blocked');
+  DOM.vibrationPermissionBtn.disabled = false;
+
+  if (!detectVibrationSupport()) {
+    DOM.vibrationPermissionBtn.textContent = 'Vibration Alerts Unavailable';
+    DOM.vibrationPermissionBtn.classList.add('blocked');
+    DOM.vibrationPermissionBtn.disabled = true;
+    return;
+  }
+
+  vibrationState.enabled = localStorage.getItem('panic_safe_vibration_enabled') === 'true';
+  if (vibrationState.enabled) {
+    DOM.vibrationPermissionBtn.textContent = 'Vibration Alerts Enabled';
+    DOM.vibrationPermissionBtn.classList.add('enabled');
+  } else {
+    DOM.vibrationPermissionBtn.textContent = 'Enable Vibration Alerts';
+  }
 }
 
 async function requestNotificationPermission() {
@@ -2418,9 +2443,13 @@ function setupEventListeners() {
     DOM.shakeDetectionToggleBtn.addEventListener('click', async () => {
       const status = localStorage.getItem('motion_permission_status');
       // If already enabled, allow user to disable
-      if (status === 'granted' && shakeDetectionState.permissionGranted) {
+      if (status === 'granted' || shakeDetectionState.permissionGranted) {
         window.removeEventListener('devicemotion', handleDeviceMotion, true);
         shakeDetectionState.permissionGranted = false;
+        shakeDetectionState.lastX = 0;
+        shakeDetectionState.lastY = 0;
+        shakeDetectionState.lastZ = 0;
+        shakeDetectionState.lastTime = 0;
         localStorage.setItem('motion_permission_status', 'disabled');
         updateShakeDetectionButton();
         showToast('Shake detection disabled', 'info');
@@ -2445,7 +2474,7 @@ function setupEventListeners() {
   
   if (DOM.vibrationPermissionBtn) {
     DOM.vibrationPermissionBtn.addEventListener('click', () => {
-      if (vibrationState.enabled) {
+      if (localStorage.getItem('panic_safe_vibration_enabled') === 'true') {
         disableVibration();
       } else {
         enableVibration();
@@ -2622,7 +2651,8 @@ function enableVibration() {
   detectVibrationSupport();
   
   vibrationState.enabled = true;
-  DOM.vibrationPermissionBtn.classList.add('enabled');
+  localStorage.setItem('panic_safe_vibration_enabled', 'true');
+  updateVibrationButton();
   showToast('Vibration alerts enabled.', 'success');
   
   // Send a short vibration pattern so the user knows it works.
@@ -2632,7 +2662,8 @@ function enableVibration() {
 
 function disableVibration() {
   vibrationState.enabled = false;
-  DOM.vibrationPermissionBtn.classList.remove('enabled');
+  localStorage.setItem('panic_safe_vibration_enabled', 'false');
+  updateVibrationButton();
   showToast('Vibration alerts disabled.', 'info');
   logActivity('Vibration alerts disabled.');
 }
@@ -2706,6 +2737,9 @@ function initializeShakeDetection() {
     console.log('Motion permission not granted — awaiting user action via toggle');
   }
 
+  updateShakeDetectionButton();
+  updateVibrationButton();
+
   // Shake alert button handlers
   alrightBtn.addEventListener('click', () => {
     console.log('User clicked I\'m Alright');
@@ -2735,6 +2769,7 @@ function initializeShakeDetection() {
     motionSkipBtn.addEventListener('click', () => {
       console.log('User clicked Skip motion permission');
       localStorage.setItem('motion_permission_status', 'skipped');
+      updateShakeDetectionButton();
       closeMotionPermissionPrompt();
       logActivity('Motion detection permission skipped by user.');
     });
@@ -2786,6 +2821,7 @@ async function requestMotionPermission() {
       console.error('Motion permission request failed:', error);
       localStorage.setItem('motion_permission_status', 'denied');
       showToast('Could not enable shake detection', 'info');
+      updateShakeDetectionButton();
     }
   } else {
     // Non-iOS device
@@ -2799,12 +2835,15 @@ async function requestMotionPermission() {
 function startShakeDetection() {
   if (shakeDetectionState.permissionGranted) {
     console.log('Shake detection already started');
+    updateShakeDetectionButton();
     return; // Already started
   }
   
   console.log('Starting shake detection - adding devicemotion listener');
   window.addEventListener('devicemotion', handleDeviceMotion, true);
   shakeDetectionState.permissionGranted = true;
+  localStorage.setItem('motion_permission_status', 'granted');
+  updateShakeDetectionButton();
   
   if (typeof logActivity === 'function') {
     logActivity('Shake detection activated.');
