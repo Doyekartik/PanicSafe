@@ -5,7 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "generate-vapid": "node scripts/generate-vapid-keys.js"
+    "generate-vapid": "node scripts/generate-vapid-keys.js",
+    "android:init": "cap add android",
+    "android:sync": "cap sync android",
+    "android:open": "cap open android",
+    "android:build-debug": "cd android && gradlew.bat assembleDebug"
   },
   "keywords": [
     "safety",
@@ -17,6 +21,9 @@
   "author": "Antigravity",
   "license": "MIT",
   "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
     "web-push": "^3.6.7"
   }
 }

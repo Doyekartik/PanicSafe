@@ -1,0 +1,13 @@
+{
+  "appId": "com.panicsafe.app",
+  "appName": "PanicSafe",
+  "webDir": "www",
+  "server": {
+    "url": "https://panicsafe-three.vercel.app/",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true
+  }
+}
