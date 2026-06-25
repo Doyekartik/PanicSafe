@@ -97,12 +97,24 @@ function subscriptionId(endpoint) {
     .slice(0, 180);
 }
 
+function shouldUseRedirectSignIn() {
+  const ua = navigator.userAgent || '';
+  const isAndroid = /Android/i.test(ua);
+  const isCapacitor = Boolean(window.Capacitor) || ua.includes('wv');
+  return isAndroid || isCapacitor;
+}
+
 async function signInWithGoogle() {
+  if (shouldUseRedirectSignIn()) {
+    await signInWithRedirect(auth, googleProvider);
+    return null;
+  }
+
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return toAuthUser(result.user);
   } catch (err) {
-    if (err.code === 'auth/popup-blocked') {
+    if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
       await signInWithRedirect(auth, googleProvider);
       return null;
     }

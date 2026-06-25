@@ -574,6 +574,7 @@ function getFirebaseAuthErrorMessage(err) {
     'auth/app-not-authorized': 'This app is not authorized for Firebase Auth. Check your Firebase web app config.',
     'auth/popup-blocked': 'The Google popup was blocked. Allow popups or try redirect sign-in.',
     'auth/popup-closed-by-user': 'The Google sign-in popup was closed before login finished.',
+    'auth/missing-initial-state': 'Google sign-in lost its browser session. Reopen PanicSafe and try again.',
     'auth/network-request-failed': 'Firebase network request failed. Check internet connection and ad blockers.',
     'auth/internal-error': 'Firebase Auth internal error. Check that Google provider is saved and the domain is authorized.'
   };
