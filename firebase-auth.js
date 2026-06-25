@@ -194,6 +194,15 @@ async function saveConnection(targetProfile) {
   }, { merge: true });
 }
 
+async function removeConnection(connectionUid) {
+  const user = auth.currentUser;
+  if (!user) throw new Error('No Firebase user is signed in.');
+  if (!connectionUid) throw new Error('Missing connected user.');
+
+  await deleteDoc(doc(db, 'users', user.uid, 'connections', connectionUid));
+  await deleteDoc(doc(db, 'users', connectionUid, 'connections', user.uid));
+}
+
 async function loadConnections() {
   const user = auth.currentUser;
   if (!user) return [];
@@ -353,6 +362,7 @@ window.PanicSafeFirebase = {
   ensureSecureUserProfile,
   findConnectionProfile,
   saveConnection,
+  removeConnection,
   loadConnections,
   savePushSubscription,
   loadPushSubscriptionsForUser,

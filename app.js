@@ -739,14 +739,6 @@ function scheduleSafetyInstructionPanels() {
 
   const panels = [];
 
-  if (localStorage.getItem('panic_safe_instruction_silent_mode') !== 'ok') {
-    panels.push({
-      key: 'panic_safe_instruction_silent_mode',
-      title: 'Sound Alert Reminder',
-      message: 'Turn off silent mode before using PanicSafe so the emergency alert sound can play loudly if your timer expires.'
-    });
-  }
-
   if (!state.connections.length && localStorage.getItem('panic_safe_instruction_connected_users') !== 'ok') {
     panels.push({
       key: 'panic_safe_instruction_connected_users',
@@ -781,7 +773,31 @@ function acknowledgeInstructionPanel() {
   if (activeInstructionPanel?.key) {
     localStorage.setItem(activeInstructionPanel.key, 'ok');
   }
+  const onAcknowledge = activeInstructionPanel?.onAcknowledge;
   showNextInstructionPanel();
+  if (typeof onAcknowledge === 'function') {
+    onAcknowledge();
+  }
+}
+
+function showSilentModeTimerInstruction(onAcknowledge) {
+  notifySilentModeReminder();
+  pendingInstructionPanels = [{
+    title: 'Sound Alert Reminder',
+    message: 'Remove your iPhone from silent mode before starting this timer so the emergency alert sound can play loudly if the timer expires.',
+    onAcknowledge
+  }];
+  showNextInstructionPanel();
+}
+
+function notifySilentModeReminder() {
+  if (!notificationsSupported() || Notification.permission !== 'granted') return;
+
+  showPanicSafeNotification(
+    'Remove silent mode',
+    'Turn off silent mode before starting your PanicSafe timer so alert sounds can play.',
+    'panicsafe-silent-mode-reminder'
+  );
 }
 
 function updateProfileChip() {
@@ -826,6 +842,24 @@ async function connectPanicSafeUser() {
   }
 }
 
+async function removeConnectedUser(connectionUid) {
+  if (!connectionUid) return;
+
+  const connection = state.connections.find(item => item.uid === connectionUid);
+  const label = connection?.fullName || 'connected user';
+
+  try {
+    await waitForFirebaseAuth();
+    await window.PanicSafeFirebase.removeConnection(connectionUid);
+    await refreshConnectionsUI();
+    showToast(`${label} removed from connected users.`, 'success');
+  } catch (err) {
+    console.error('Could not remove connected user:', err);
+    const code = err && err.code ? err.code : err.message;
+    showToast(`Could not remove connected user: ${code}`, 'info');
+  }
+}
+
 async function refreshConnectionsUI() {
   if (!state.authUser || !window.PanicSafeFirebase) {
     state.connections = [];
@@ -860,9 +894,18 @@ function renderConnections() {
         <div class="connected-user-name">${escapeHTML(connection.fullName || 'PanicSafe user')}</div>
         <div class="connected-user-meta">${escapeHTML(window.PanicSafeFirebase?.getConnectionCode(connection.connectionCode) || 'Connected')}</div>
       </div>
+      <button type="button" class="connected-user-remove-btn" data-uid="${escapeHTML(connection.uid)}" aria-label="Remove ${escapeHTML(connection.fullName || 'connected user')}" title="Remove connected user">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
       <span class="indicator-dot"></span>
     `;
     DOM.connectedUsersList.appendChild(item);
+  });
+
+  DOM.connectedUsersList.querySelectorAll('.connected-user-remove-btn').forEach((button) => {
+    button.addEventListener('click', () => removeConnectedUser(button.dataset.uid));
   });
 }
 
@@ -1631,7 +1674,11 @@ function getTimerDuration() {
   return (hrs * 3600) + (mins * 60) + secs;
 }
 
-async function startSafetyTimer() {
+function startSafetyTimer() {
+  showSilentModeTimerInstruction(activateSafetyTimer);
+}
+
+async function activateSafetyTimer() {
   const duration = getTimerDuration();
   if (duration <= 0) {
     showToast('Please select or configure a safety timer duration.', 'info');
