@@ -51,6 +51,7 @@ const API_ENDPOINT = '/api/contacts';
 const SOS_ALERT_ENDPOINT = '/api/sos-alert';
 const PUSH_CONFIG_ENDPOINT = '/api/push-config';
 const PUSH_ALERT_ENDPOINT = '/api/send-push-alert';
+const ACTIVE_TIMER_STORAGE_KEY = 'panic_safe_active_timer';
 
 // --- DOM Elements ---
 const DOM = {
@@ -185,6 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   hydrateGuardianAlertFromUrl();
   initializeDarkMode();
   await synchronizeWithBackend();
+  restoreActiveTimerFromStorage();
   logActivity('System initialized successfully. All checks secure.');
 });
 
@@ -1685,6 +1687,96 @@ function getTimerDuration() {
   return (hrs * 3600) + (mins * 60) + secs;
 }
 
+function persistActiveTimer() {
+  if (state.monitoringState !== 'TIMER_ACTIVE') return;
+
+  localStorage.setItem(ACTIVE_TIMER_STORAGE_KEY, JSON.stringify({
+    totalSeconds: state.timer.totalSeconds,
+    endAt: state.timer.endAt,
+    userName: state.userName,
+    reminderSent: state.timer.reminderSent,
+    startedAt: state.timer.startedAt || Date.now()
+  }));
+}
+
+function clearPersistedTimer() {
+  localStorage.removeItem(ACTIVE_TIMER_STORAGE_KEY);
+}
+
+function restoreActiveTimerFromStorage() {
+  const rawTimer = localStorage.getItem(ACTIVE_TIMER_STORAGE_KEY);
+  if (!rawTimer || state.monitoringState === 'ALARM') return;
+
+  try {
+    const savedTimer = JSON.parse(rawTimer);
+    if (!savedTimer?.endAt || !savedTimer?.totalSeconds) {
+      clearPersistedTimer();
+      return;
+    }
+
+    state.userName = savedTimer.userName || state.userName || 'PanicSafe user';
+    state.timer.totalSeconds = Number(savedTimer.totalSeconds) || 0;
+    state.timer.endAt = Number(savedTimer.endAt);
+    state.timer.startedAt = Number(savedTimer.startedAt) || Date.now();
+    state.timer.reminderSent = Boolean(savedTimer.reminderSent);
+    state.timer.remainingSeconds = Math.max(0, Math.ceil((state.timer.endAt - Date.now()) / 1000));
+    state.timer.isDangerState = state.timer.remainingSeconds <= 10;
+
+    if (state.timer.remainingSeconds <= 0) {
+      clearPersistedTimer();
+      expireTimerTriggerAlarm();
+      return;
+    }
+
+    resumeTimerUIFromPersistedState();
+    logActivity(`Restored active safety timer. Remaining: ${formatTime(state.timer.remainingSeconds)}.`);
+  } catch (err) {
+    console.warn('Could not restore active timer:', err);
+    clearPersistedTimer();
+  }
+}
+
+function resumeTimerUIFromPersistedState() {
+  setMonitoringState('TIMER_ACTIVE');
+  DOM.checkinBtn.classList.add('timer-active');
+  DOM.checkinBtn.classList.toggle('timer-danger', state.timer.isDangerState);
+  DOM.timerProgress.classList.toggle('danger', state.timer.isDangerState);
+  DOM.timerQuickActions.classList.add('visible');
+  updateTimerUI();
+  mountLeafletMap();
+  startTimerTicker();
+}
+
+function startTimerTicker() {
+  if (state.timer.intervalId) {
+    clearInterval(state.timer.intervalId);
+  }
+  state.timer.intervalId = setInterval(tickTimer, 1000);
+}
+
+function reconcileTimerWithClock() {
+  if (state.monitoringState !== 'TIMER_ACTIVE' || !state.timer.endAt) return;
+
+  state.timer.remainingSeconds = Math.max(0, Math.ceil((state.timer.endAt - Date.now()) / 1000));
+
+  if (state.timer.remainingSeconds <= 0) {
+    clearPersistedTimer();
+    expireTimerTriggerAlarm();
+    return;
+  }
+
+  if (state.timer.remainingSeconds <= 15 && !state.timer.reminderSent) {
+    sendTimerReminder();
+  }
+
+  if (state.timer.remainingSeconds <= 10 && !state.timer.isDangerState) {
+    enterTimerDangerState();
+  }
+
+  updateTimerUI();
+  persistActiveTimer();
+}
+
 async function startSafetyTimer() {
   if (state.authUser && window.PanicSafeFirebase) {
     await refreshConnectionsUI();
@@ -1713,12 +1805,16 @@ async function activateSafetyTimer() {
   
   state.timer.totalSeconds = duration;
   state.timer.remainingSeconds = duration;
+  state.timer.startedAt = Date.now();
+  state.timer.endAt = state.timer.startedAt + (duration * 1000);
   state.timer.isDangerState = false;
   state.timer.reminderSent = false;
+  persistActiveTimer();
   
   setMonitoringState('TIMER_ACTIVE');
   playChime('success');
   logActivity(`Safety Timer armed for ${formatTime(duration)}.`);
+  logActivity('Background-safe deadline saved. PanicSafe will recover timer state after app suspend.');
   
   // Transition home circle button into timer active state
   DOM.checkinBtn.classList.add('timer-active');
@@ -1731,42 +1827,56 @@ async function activateSafetyTimer() {
   // Mount leaflet maps
   mountLeafletMap();
   
-  if (state.timer.intervalId) {
-    clearInterval(state.timer.intervalId);
-  }
-  state.timer.intervalId = setInterval(tickTimer, 1000);
+  startTimerTicker();
   
   showToast(`Safety check-in active. Disarm in ${formatTime(duration)}.`, 'success');
 }
 
 function tickTimer() {
-  state.timer.remainingSeconds--;
+  if (state.timer.endAt) {
+    state.timer.remainingSeconds = Math.max(0, Math.ceil((state.timer.endAt - Date.now()) / 1000));
+  } else {
+    state.timer.remainingSeconds--;
+  }
   playChime('tick');
 
   if (!state.timer.reminderSent && state.timer.remainingSeconds === 15) {
-    state.timer.reminderSent = true;
-    showPanicSafeNotification(
-      'PanicSafe reminder',
-      '15 seconds left before your timer ends. Check in now to stay safe.',
-      'panicsafe-15-sec-reminder'
-    );
-    logActivity('Reminder sent: 15 seconds remaining on timer.');
-    showToast('15 seconds left on your timer.', 'info');
+    sendTimerReminder();
   }
   
   if (state.timer.remainingSeconds <= 10 && !state.timer.isDangerState) {
-    state.timer.isDangerState = true;
-    DOM.timerProgress.classList.add('danger');
-    DOM.checkinBtn.classList.add('timer-danger');
-    logActivity('Safety timer running low. Impending emergency alert.');
-    showToast('Check in immediately to avoid distress alert!', 'info');
+    enterTimerDangerState();
   }
   
   updateTimerUI();
   
   if (state.timer.remainingSeconds <= 0) {
+    clearPersistedTimer();
     expireTimerTriggerAlarm();
+    return;
   }
+
+  persistActiveTimer();
+}
+
+function sendTimerReminder() {
+  state.timer.reminderSent = true;
+  showPanicSafeNotification(
+    'PanicSafe reminder',
+    '15 seconds left before your timer ends. Check in now to stay safe.',
+    'panicsafe-15-sec-reminder'
+  );
+  logActivity('Reminder sent: 15 seconds remaining on timer.');
+  showToast('15 seconds left on your timer.', 'info');
+  persistActiveTimer();
+}
+
+function enterTimerDangerState() {
+  state.timer.isDangerState = true;
+  DOM.timerProgress.classList.add('danger');
+  DOM.checkinBtn.classList.add('timer-danger');
+  logActivity('Safety timer running low. Impending emergency alert.');
+  showToast('Check in immediately to avoid distress alert!', 'info');
 }
 
 function updateTimerUI() {
@@ -1797,6 +1907,7 @@ function extendTimer() {
   const addition = 120; // 2 minutes
   state.timer.remainingSeconds += addition;
   state.timer.totalSeconds += addition;
+  state.timer.endAt = (state.timer.endAt || Date.now()) + (addition * 1000);
   
   if (state.timer.remainingSeconds > 10) {
     state.timer.isDangerState = false;
@@ -1806,6 +1917,7 @@ function extendTimer() {
   
   playChime('success');
   updateTimerUI();
+  persistActiveTimer();
   logActivity(`Extended Safety Timer by 2:00. Remaining: ${formatTime(state.timer.remainingSeconds)}.`);
   showToast('Timer extended by 2 minutes.', 'success');
   
@@ -1823,6 +1935,9 @@ function disarmSafetyTimer() {
 
   state.timer.reminderSent = false;
   state.timer.isDangerState = false;
+  state.timer.endAt = null;
+  state.timer.startedAt = null;
+  clearPersistedTimer();
   
   setMonitoringState('IDLE');
   playChime('cancel');
@@ -1859,6 +1974,9 @@ function expireTimerTriggerAlarm() {
 
   state.timer.reminderSent = false;
   state.timer.isDangerState = false;
+  state.timer.endAt = null;
+  state.timer.startedAt = null;
+  clearPersistedTimer();
   
   logActivity('Timer reached 0 without check-in. Triggering SOS sequence.');
   triggerAlarmSequence('Timer Expiration');
@@ -2420,6 +2538,17 @@ function normalizePhoneNumber(value) {
 // SYSTEM WORKFLOW EVENTS BINDINGS
 // ============================================================================
 function setupEventListeners() {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      reconcileTimerWithClock();
+    } else {
+      persistActiveTimer();
+    }
+  });
+  window.addEventListener('pageshow', reconcileTimerWithClock);
+  window.addEventListener('focus', reconcileTimerWithClock);
+  window.addEventListener('pagehide', persistActiveTimer);
+
   DOM.modalOverlay.addEventListener('click', closeAllSheets);
   document.querySelectorAll('.sheet-close-btn').forEach((button) => {
     button.addEventListener('click', closeAllSheets);

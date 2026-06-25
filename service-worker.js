@@ -1,4 +1,4 @@
-const CACHE_NAME = 'panicsafe-pwa-v27';
+const CACHE_NAME = 'panicsafe-pwa-v28';
 const CORE_ASSETS = [
   '/',
   '/index.html',
