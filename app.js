@@ -730,27 +730,6 @@ function closeProfileEditor() {
   }
 
   DOM.profileScreen.classList.remove('visible');
-  scheduleSafetyInstructionPanels();
-}
-
-function scheduleSafetyInstructionPanels() {
-  if (!state.authUser || !state.profile) return;
-  if (DOM.profileScreen.classList.contains('visible')) return;
-
-  const panels = [];
-
-  if (!state.connections.length && localStorage.getItem('panic_safe_instruction_connected_users') !== 'ok') {
-    panels.push({
-      key: 'panic_safe_instruction_connected_users',
-      title: 'Connect A Trusted User',
-      message: 'Add connected users from the account section so PanicSafe can send your emergency alert and location to another PanicSafe user.'
-    });
-  }
-
-  if (!panels.length || activeInstructionPanel) return;
-
-  pendingInstructionPanels = panels;
-  showNextInstructionPanel();
 }
 
 function showNextInstructionPanel() {
@@ -780,13 +759,21 @@ function acknowledgeInstructionPanel() {
   }
 }
 
-function showSilentModeTimerInstruction(onAcknowledge) {
+function showTimerStartInstructions(onAcknowledge) {
   notifySilentModeReminder();
   pendingInstructionPanels = [{
     title: 'Sound Alert Reminder',
     message: 'Remove your iPhone from silent mode before starting this timer so the emergency alert sound can play loudly if the timer expires.',
-    onAcknowledge
   }];
+
+  if (!state.connections.length) {
+    pendingInstructionPanels.push({
+      title: 'Connect A Trusted User',
+      message: 'Add connected users from the account section so PanicSafe can send your emergency alert and location to another PanicSafe user.'
+    });
+  }
+
+  pendingInstructionPanels[pendingInstructionPanels.length - 1].onAcknowledge = onAcknowledge;
   showNextInstructionPanel();
 }
 
@@ -874,7 +861,6 @@ async function refreshConnectionsUI() {
     state.connections = [];
   }
   renderConnections();
-  scheduleSafetyInstructionPanels();
 }
 
 function renderConnections() {
@@ -1674,8 +1660,11 @@ function getTimerDuration() {
   return (hrs * 3600) + (mins * 60) + secs;
 }
 
-function startSafetyTimer() {
-  showSilentModeTimerInstruction(activateSafetyTimer);
+async function startSafetyTimer() {
+  if (state.authUser && window.PanicSafeFirebase) {
+    await refreshConnectionsUI();
+  }
+  showTimerStartInstructions(activateSafetyTimer);
 }
 
 async function activateSafetyTimer() {
