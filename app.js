@@ -786,11 +786,11 @@ function acknowledgeInstructionPanel() {
   }
 }
 
-function showTimerStartInstructions(onAcknowledge) {
+function showSafetyActionInstructions(actionLabel, onAcknowledge) {
   notifySilentModeReminder();
   pendingInstructionPanels = [{
     title: 'Sound Alert Reminder',
-    message: 'Remove your iPhone from silent mode before starting this timer so the emergency alert sound can play loudly if the timer expires.',
+    message: `Remove your iPhone from silent mode before using ${actionLabel} so the emergency alert sound can play loudly if help is needed.`,
   }];
 
   if (!state.connections.length) {
@@ -804,12 +804,20 @@ function showTimerStartInstructions(onAcknowledge) {
   showNextInstructionPanel();
 }
 
+function showTimerStartInstructions(onAcknowledge) {
+  showSafetyActionInstructions('the safety timer', onAcknowledge);
+}
+
+function showPanicStartInstructions(onAcknowledge) {
+  showSafetyActionInstructions('the Panic button', onAcknowledge);
+}
+
 function notifySilentModeReminder() {
   if (!notificationsSupported() || Notification.permission !== 'granted') return;
 
   showPanicSafeNotification(
     'Remove silent mode',
-    'Turn off silent mode before starting your PanicSafe timer so alert sounds can play.',
+    'Turn off silent mode before using PanicSafe so alert sounds can play.',
     'panicsafe-silent-mode-reminder'
   );
 }
@@ -1999,6 +2007,13 @@ function formatTime(totalSecs) {
 // ============================================================================
 // PANIC BUTTON SEQUENCE
 // ============================================================================
+async function startPanicButtonFlow() {
+  if (state.authUser && window.PanicSafeFirebase) {
+    await refreshConnectionsUI();
+  }
+  showPanicStartInstructions(triggerPanicBtnSequence);
+}
+
 function triggerPanicBtnSequence() {
   closeAllSheets();
   requestDeviceLocation().then((hasLocation) => {
@@ -2647,7 +2662,7 @@ function setupEventListeners() {
   DOM.importContactBtn.addEventListener('click', triggerDeviceContactPicker);
   DOM.vcardImportInput.addEventListener('change', handleVCardImport);
   
-  DOM.panicTriggerBtn.addEventListener('click', triggerPanicBtnSequence);
+  DOM.panicTriggerBtn.addEventListener('click', startPanicButtonFlow);
   DOM.panicCancelBtn.addEventListener('click', cancelPanicBtnSequence);
   DOM.disarmAlarmBtn.addEventListener('click', dismissAlarmSequence);
   DOM.guardianAlertDismissBtn.addEventListener('click', dismissGuardianAlert);
