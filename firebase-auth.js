@@ -2,7 +2,9 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.7.0/firebas
 import {
   getAuth,
   GoogleAuthProvider,
+  browserLocalPersistence,
   onAuthStateChanged,
+  setPersistence,
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
@@ -99,13 +101,15 @@ function subscriptionId(endpoint) {
 
 function shouldUseRedirectSignIn() {
   const ua = navigator.userAgent || '';
-  const isAndroid = /Android/i.test(ua);
-  const isCapacitor = Boolean(window.Capacitor) || ua.includes('wv');
-  return isAndroid || isCapacitor;
+  const isCapacitor = Boolean(window.Capacitor);
+  const isAndroidWebView = /Android/i.test(ua) && (ua.includes('; wv') || /\bwv\b/i.test(ua));
+  return isCapacitor || isAndroidWebView;
 }
 
 async function signInWithGoogle() {
-  if (shouldUseRedirectSignIn()) {
+  const useRedirect = shouldUseRedirectSignIn();
+
+  if (useRedirect) {
     await signInWithRedirect(auth, googleProvider);
     return null;
   }
@@ -115,8 +119,10 @@ async function signInWithGoogle() {
     return toAuthUser(result.user);
   } catch (err) {
     if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
-      await signInWithRedirect(auth, googleProvider);
-      return null;
+      if (useRedirect) {
+        await signInWithRedirect(auth, googleProvider);
+        return null;
+      }
     }
     throw err;
   }
@@ -364,10 +370,12 @@ async function deleteCurrentUserAccount() {
   }
 }
 
-const ready = getRedirectResult(auth).catch((err) => {
-  console.warn('Firebase redirect sign-in check failed:', err);
-  return null;
-});
+const ready = setPersistence(auth, browserLocalPersistence)
+  .then(() => getRedirectResult(auth))
+  .catch((err) => {
+    console.warn('Firebase sign-in readiness check failed:', err);
+    return null;
+  });
 
 window.PanicSafeFirebase = {
   auth,
