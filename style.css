@@ -1726,6 +1726,10 @@ main {
   margin-top: 15px;
 }
 
+.app-mockup.timer-monitoring-active .contacts-btn-container {
+  display: none;
+}
+
 .contacts-btn {
   width: 100%;
   height: 50px;
