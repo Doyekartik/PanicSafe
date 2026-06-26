@@ -31,6 +31,8 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --app-height: 100dvh;
+  --phone-width: 393px;
+  --phone-height: 852px;
   --island-clearance: 16px;
   
   /* Glassmorphism effects */
@@ -557,9 +559,9 @@ body {
 
 /* App shell container for desktop and mobile presentation */
 .app-mockup {
-  width: 393px;         /* iPhone 15 logical width */
-  height: 852px;        /* iPhone 15 logical height */
-  max-width: 100%;
+  width: var(--phone-width);
+  height: var(--phone-height);
+  max-width: 100vw;
   max-height: var(--app-height);
   background-color: var(--bg-app);
   border-radius: 40px;
@@ -925,8 +927,8 @@ body {
 @media (display-mode: standalone), (max-width: 520px) {
   body {
     background-color: var(--bg-app);
-    align-items: stretch;
-    justify-content: stretch;
+    align-items: center;
+    justify-content: center;
     min-height: var(--app-height);
     height: var(--app-height);
     width: 100%;
@@ -934,8 +936,8 @@ body {
   }
 
   .app-mockup {
-    width: 100%;
-    max-width: none;
+    width: 100vw;
+    max-width: var(--phone-width);
     height: var(--app-height);
     min-height: 0;
     max-height: var(--app-height);
