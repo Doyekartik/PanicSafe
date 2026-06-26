@@ -30,9 +30,6 @@
   --shadow-dashboard: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --app-height: 100dvh;
-  --phone-width: 393px;
-  --phone-height: 852px;
   --island-clearance: 16px;
   
   /* Glassmorphism effects */
@@ -543,9 +540,9 @@ body {
   font-family: var(--font-body);
   background-color: var(--bg-app);
   color: var(--text-dark);
-  min-height: var(--app-height);
-  height: var(--app-height);
-  width: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -555,14 +552,43 @@ body {
   overscroll-behavior: none;
   margin: 0;
   padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@media (display-mode: standalone), (max-width: 520px) {
+  body {
+    background-color: var(--bg-app);
+    align-items: stretch;
+    justify-content: stretch;
+    min-height: 100dvh;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .app-mockup {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-app);
+  }
 }
 
 /* App shell container for desktop and mobile presentation */
 .app-mockup {
-  width: var(--phone-width);
-  height: var(--phone-height);
+  width: 393px;         /* iPhone 15 logical width */
+  height: 852px;        /* iPhone 15 logical height */
   max-width: 100vw;
-  max-height: var(--app-height);
+  max-height: 100dvh;
   background-color: var(--bg-app);
   border-radius: 40px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
@@ -927,24 +953,25 @@ body {
 @media (display-mode: standalone), (max-width: 520px) {
   body {
     background-color: var(--bg-app);
-    align-items: center;
-    justify-content: center;
-    min-height: var(--app-height);
-    height: var(--app-height);
-    width: 100%;
+    align-items: stretch;
+    justify-content: stretch;
+    min-height: 100dvh;
+    height: 100dvh;
+    width: 100vw;
     overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   .app-mockup {
     width: 100vw;
-    max-width: var(--phone-width);
-    height: var(--app-height);
-    min-height: 0;
-    max-height: var(--app-height);
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;
+    max-height: none;
     border: none;
     border-radius: 0;
     box-shadow: none;
-    flex: 0 0 var(--app-height);
+    flex: 1;
     display: flex;
     flex-direction: column;
     background-color: var(--bg-app);

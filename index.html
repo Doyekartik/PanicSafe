@@ -608,20 +608,24 @@
   <script type="module" src="firebase-auth.js"></script>
   <script src="app.js"></script>
   <script>
-    function updateAppViewport() {
-      const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-      document.documentElement.style.setProperty('--app-height', `${height}px`);
+    // Force layout recalculation on orientation change to prevent white bar
+    function handleOrientationChange() {
+      document.body.style.height = '100dvh';
+      document.body.style.minHeight = '100dvh';
+      const mockup = document.querySelector('.app-mockup');
+      if (mockup) {
+        mockup.style.height = '100%';
+        mockup.style.minHeight = '100dvh';
+      }
+      // Force reflow
       document.body.offsetHeight;
     }
 
-    window.addEventListener('orientationchange', updateAppViewport);
-    window.addEventListener('resize', updateAppViewport);
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', updateAppViewport);
-      window.visualViewport.addEventListener('scroll', updateAppViewport);
-    }
+    window.addEventListener('orientationchange', handleOrientationChange);
+    window.addEventListener('resize', handleOrientationChange);
 
-    updateAppViewport();
+    // Initial setup
+    handleOrientationChange();
   </script>
 </body>
 </html>
